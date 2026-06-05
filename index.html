@@ -135,27 +135,24 @@
             letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: 6px;
         }
         .coord-big {
-            font-size: 2.8rem; font-weight: 800;
+            font-size: clamp(1.4rem, 5vw, 2.2rem);
+            font-weight: 800;
             font-family: 'Courier New', monospace;
+            word-break: break-all;
+            line-height: 1.6;
         }
         .congrats-btns { display: flex; flex-direction: column; gap: 12px; width: 100%; max-width: 320px; }
 
         /* ── 座標格子頁 ── */
+        :root { --cell-sz: 38px; --label-sz: 22px; }
         #screen-grid { background: #f0f0f0; }
         .toolbar {
-            display: flex; gap: 10px; padding: 12px 16px;
-            background: white; border-bottom: 1px solid #eee; align-items: center;
+            display: flex; gap: 8px; padding: 10px 16px;
+            background: white; border-bottom: 1px solid #eee;
+            align-items: center; justify-content: center;
         }
-        .tool-btn {
-            padding: 8px 18px;
-            border: 2px solid #ddd; border-radius: 8px;
-            background: white; font-size: 0.85rem; font-weight: 600;
-            cursor: pointer; color: #444;
-        }
-        .tool-btn.active { border-color: #111; background: #111; color: white; }
         .save-btn {
-            margin-left: auto;
-            padding: 8px 20px;
+            padding: 8px 16px;
             background: #22c55e; color: white;
             border: none; border-radius: 8px;
             font-size: 0.85rem; font-weight: 700; cursor: pointer;
@@ -163,23 +160,24 @@
         .save-btn:active { opacity: 0.8; }
 
         .grid-area {
-            flex: 1; display: flex;
-            flex-direction: column; align-items: center;
-            padding: 20px 16px; overflow: auto;
+            flex: 1;
+            display: flex; align-items: center; justify-content: center;
+            overflow: hidden;
+            padding: 8px;
         }
         .grid-wrap {
             display: grid;
-            grid-template-columns: 22px repeat(6, 1fr);
-            gap: 4px;
-            width: 100%; max-width: 380px;
+            grid-template-columns: var(--label-sz) repeat(9, var(--cell-sz));
+            grid-auto-rows: var(--cell-sz);
+            gap: 3px;
             user-select: none; -webkit-user-select: none;
         }
         .gl {
             display: flex; align-items: center; justify-content: center;
-            font-size: 0.7rem; color: #aaa; font-weight: 500;
+            font-size: 0.7rem; color: #999; font-weight: 600;
         }
         .gc {
-            aspect-ratio: 1;
+            width: var(--cell-sz); height: var(--cell-sz);
             border: 1.5px solid #ddd;
             border-radius: 3px;
             background: #f8f8f8;
@@ -199,17 +197,158 @@
             pointer-events: none; z-index: 200;
         }
         .toast.show { opacity: 1; }
+
+        /* ── 說明彈窗 ── */
+        .modal-overlay {
+            position: fixed; inset: 0;
+            background: rgba(0,0,0,0.5);
+            display: flex; align-items: center; justify-content: center;
+            z-index: 300; padding: 20px;
+            opacity: 0; pointer-events: none;
+            transition: opacity 0.25s;
+        }
+        .modal-overlay.show { opacity: 1; pointer-events: auto; }
+        .modal-box {
+            background: white; border-radius: 20px;
+            padding: 28px 24px; max-width: 380px; width: 100%;
+            position: relative;
+            transform: translateY(16px);
+            transition: transform 0.25s;
+            max-height: 90vh; overflow-y: auto;
+        }
+        .modal-overlay.show .modal-box { transform: translateY(0); }
+        .modal-close {
+            position: absolute; top: 16px; right: 16px;
+            background: #f0f0f0; border: none;
+            width: 32px; height: 32px; border-radius: 50%;
+            font-size: 1rem; cursor: pointer; color: #555;
+            display: flex; align-items: center; justify-content: center;
+        }
+        .modal-close:active { background: #ddd; }
+        .modal-title { font-size: 1.4rem; font-weight: 800; color: #111; margin-bottom: 6px; }
+        .modal-lead  { font-size: 0.92rem; color: #555; line-height: 1.6; margin-bottom: 20px; }
+        .modal-section { margin-bottom: 18px; }
+        .modal-section-title {
+            font-size: 0.75rem; font-weight: 700; color: #aaa;
+            letter-spacing: 0.08em; text-transform: uppercase;
+            margin-bottom: 10px;
+        }
+        .step-list { display: flex; flex-direction: column; gap: 10px; }
+        .step {
+            display: flex; gap: 12px; align-items: flex-start;
+        }
+        .step-num {
+            min-width: 26px; height: 26px;
+            background: #111; color: white;
+            border-radius: 50%; font-size: 0.8rem; font-weight: 800;
+            display: flex; align-items: center; justify-content: center;
+        }
+        .step-text { font-size: 0.92rem; color: #333; line-height: 1.5; padding-top: 3px; }
+        .step-text strong { color: #111; }
+        .tip-list { display: flex; flex-direction: column; gap: 8px; }
+        .tip { font-size: 0.88rem; color: #555; line-height: 1.5; padding-left: 14px; position: relative; }
+        .tip::before { content: '·'; position: absolute; left: 0; color: #aaa; }
+        .modal-cta {
+            margin-top: 22px;
+            padding: 15px;
+            background: #111; color: white;
+            border: none; border-radius: 12px;
+            font-size: 1rem; font-weight: 700;
+            width: 100%; cursor: pointer;
+        }
+        .modal-cta:active { opacity: 0.8; }
+
+        /* ── 進度條 ── */
+        .progress-area {
+            width: 100%; max-width: 340px;
+            display: flex; flex-direction: column; gap: 6px;
+        }
+        .progress-label {
+            font-size: 0.88rem; color: #555; text-align: center;
+        }
+        .progress-label span { font-weight: 800; color: #111; }
+        .progress-bar-wrap {
+            height: 8px; background: #e5e5e5; border-radius: 99px; overflow: hidden;
+        }
+        .progress-bar-fill {
+            height: 100%; background: #22c55e; border-radius: 99px;
+            width: 0%; transition: width 0.4s ease;
+        }
+
+        /* ── 測試按鈕（已完成）── */
+        .demo-btn.done {
+            background: #111; color: white; border-color: #111;
+        }
+
+        /* ── 說明按鈕（主頁右上角）── */
+        .help-btn {
+            position: absolute; top: 18px; right: 18px;
+            background: #f0f0f0; border: none;
+            width: 36px; height: 36px; border-radius: 50%;
+            font-size: 1rem; font-weight: 700; color: #555;
+            cursor: pointer;
+        }
+        .help-btn:active { background: #ddd; }
+        #screen-home { position: relative; }
     </style>
 </head>
 <body>
 
 <!-- ════════════════════ 主頁 ════════════════════ -->
 <div id="screen-home" class="screen active">
+    <button class="help-btn" onclick="openModal()" title="說明">？</button>
     <div class="home-title">PBL 專題發表</div>
     <div class="home-subtitle">掃描各組 QR Code，回答問題獲得座標</div>
+    <div class="progress-area">
+        <div class="progress-label">已打卡 <span id="progress-count">0</span> / 16 組</div>
+        <div class="progress-bar-wrap"><div class="progress-bar-fill" id="progress-bar"></div></div>
+    </div>
     <div class="home-buttons">
         <button class="btn btn-dark"  id="btn-scan" onclick="startScanner()">掃描任務</button>
         <button class="btn btn-light" onclick="showScreen('screen-grid')">座標地圖</button>
+    </div>
+</div>
+
+<!-- ════════════════════ 說明彈窗 ════════════════════ -->
+<div class="modal-overlay" id="modal-help">
+    <div class="modal-box">
+        <button class="modal-close" onclick="closeModal()">✕</button>
+
+        <div class="modal-title">歡迎來到 PBL 發表！</div>
+        <div class="modal-lead">
+            各組同學都有一個 QR Code，掃描後回答問題，<br>
+            答對就能獲得一組<strong>神秘座標</strong>。<br>
+            把所有座標都標在地圖上，就能揭開隱藏的圖案！
+        </div>
+
+        <div class="modal-section">
+            <div class="modal-section-title">怎麼玩</div>
+            <div class="step-list">
+                <div class="step">
+                    <div class="step-num">1</div>
+                    <div class="step-text"><strong>掃描 QR Code</strong><br>在各組攤位找到 QR Code，用主頁的「掃描任務」掃描</div>
+                </div>
+                <div class="step">
+                    <div class="step-num">2</div>
+                    <div class="step-text"><strong>回答問題</strong><br>看完小組介紹後點「開始答題」，選出正確答案</div>
+                </div>
+                <div class="step">
+                    <div class="step-num">3</div>
+                    <div class="step-text"><strong>記下座標</strong><br>答對後會出現座標，前往「座標地圖」標記你的格子</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="modal-section">
+            <div class="modal-section-title">座標地圖操作</div>
+            <div class="tip-list">
+                <div class="tip">點格子 → 填色標記</div>
+                <div class="tip">再點一次已填的格子 → 清除</div>
+                <div class="tip">點「儲存」可保留你的進度，下次開啟還在</div>
+            </div>
+        </div>
+
+        <button class="modal-cta" onclick="closeModal()">開始探索！</button>
     </div>
 </div>
 
@@ -285,13 +424,11 @@
         <div class="nav-title">座標地圖</div>
     </div>
     <div class="toolbar">
-        <button class="tool-btn active" id="tool-pen"    onclick="setTool('pen')">畫筆</button>
-        <button class="tool-btn"        id="tool-eraser" onclick="setTool('eraser')">橡皮擦</button>
         <button class="save-btn" onclick="saveGrid()">儲存</button>
         <button class="save-btn" style="background:#555;" onclick="startScanner()">返回掃描</button>
         <button class="save-btn" style="background:#333;" onclick="showScreen('screen-home')">返回主頁</button>
     </div>
-    <div class="grid-area">
+    <div class="grid-area" id="grid-area">
         <div class="grid-wrap" id="grid-wrap"></div>
     </div>
 </div>
@@ -306,99 +443,83 @@
 // ══════════════════════════════════════════════
 var GROUPS = [
     {
-        id:1, name:'繪夢日光：神話', coord:'B3',
-        desc:'研究主題：永續能源。探討如何在校園中導入太陽能發電，減少碳排放。',
-        q:'太陽能板將什麼能量轉換成電能？',
-        opts:['A. 熱能','B. 光能','C. 動能'], ans:'B'
-    },
-    {
-        id:2, name:'地球「圓」來如此', coord:'C2',
-        desc:'研究主題：水資源保護。調查學校附近溪流的水質，並提出改善方案。',
-        q:'下列何者是水污染的主要來源之一？',
-        opts:['A. 工業廢水','B. 雨水','C. 地下水'], ans:'A'
-    },
-    {
-        id:3, name:'飛向宇宙浩瀚無垠', coord:'D4',
-        desc:'研究主題：食物里程。追蹤每天吃的食物從產地到餐桌的距離。',
-        q:'「食物里程」指的是什麼？',
-        opts:['A. 食物的熱量','B. 食物運輸的距離','C. 食物的保存期限'], ans:'B'
-    },
-    {
-        id:4, name:'太空人的二三事', coord:'E3',
-        desc:'研究主題：空氣品質。監測學校周邊 PM2.5 數值，分析影響因素。',
-        q:'PM2.5 中的「2.5」代表什麼？',
-        opts:['A. 污染物濃度','B. 顆粒直徑（微米）','C. 危害指數'], ans:'B'
-    },
-    {
-        id:5, name:'有去無回的黑洞', coord:'F2',
-        desc:'研究主題：都市熱島效應。比較學校與公園的溫度差異，探討綠化效果。',
-        q:'都市熱島效應主要是由什麼原因造成？',
-        opts:['A. 地球暖化','B. 建築物與道路吸熱','C. 颱風減少'], ans:'B'
-    },
-    {
-        id:6, name:'外星人與他們的產地', coord:'F4',
-        desc:'研究主題：廚餘再利用。將學校廚餘製作成堆肥，應用於校園種植。',
-        q:'廚餘製成的堆肥主要用途是什麼？',
-        opts:['A. 燃料','B. 土壤改良劑','C. 淨水劑'], ans:'B'
-    },
-    {
-        id:7, name:'星球生存組', coord:'G3',
-        desc:'研究主題：噪音污染。測量校園各區域噪音值，提出降噪設計方案。',
-        q:'人耳長期暴露在多少分貝以上可能損傷聽力？',
-        opts:['A. 60 dB','B. 85 dB','C. 100 dB'], ans:'B'
-    },
-    {
-        id:8, name:'星座神話組', coord:'H2',
-        desc:'研究主題：生物多樣性。記錄校園內動植物種類，建立生態地圖。',
-        q:'生物多樣性最豐富的生態系統是？',
-        opts:['A. 沙漠','B. 熱帶雨林','C. 極地凍原'], ans:'B'
-    },
-    {
-        id:9, name:'神「棋」寶貝', coord:'H4',
-        desc:'研究主題：垃圾減量。分析學校垃圾組成，推動源頭減廢行動。',
-        q:'下列何者屬於「資源回收」的範疇？',
-        opts:['A. 廚餘','B. 鋁罐','C. 衛生紙'], ans:'B'
-    },
-    {
-        id:10, name:'體操館', coord:'I3',
-        desc:'研究主題：光害影響。調查校園周邊夜間照明對生物的影響。',
-        q:'光害對夜行性動物最主要的影響是？',
-        opts:['A. 影響覓食與繁殖','B. 讓牠們睡得更好','C. 提高體溫'], ans:'A'
-    },
-    {
-        id:11, name:'小小滑冰', coord:'I5',
-        desc:'小組介紹預留位置。',
-        q:'題目預留位置？',
+        id:1,  name:'繪夢日光：神話',      coords:['K6','F5'],
+        desc:'小組介紹預留位置。', q:'題目預留位置？',
         opts:['A. 選項一','B. 選項二','C. 選項三'], ans:'A'
     },
     {
-        id:12, name:'羽球組', coord:'A2',
-        desc:'小組介紹預留位置。',
-        q:'題目預留位置？',
+        id:2,  name:'地球「圓」來如此',    coords:['F8','H3'],
+        desc:'小組介紹預留位置。', q:'題目預留位置？',
         opts:['A. 選項一','B. 選項二','C. 選項三'], ans:'A'
     },
     {
-        id:13, name:'足球組', coord:'A4',
-        desc:'小組介紹預留位置。',
-        q:'題目預留位置？',
+        id:3,  name:'飛向宇宙浩瀚無垠',   coords:['B2','G9'],
+        desc:'小組介紹預留位置。', q:'題目預留位置？',
         opts:['A. 選項一','B. 選項二','C. 選項三'], ans:'A'
     },
     {
-        id:14, name:'鐵人三項組', coord:'B5',
-        desc:'小組介紹預留位置。',
-        q:'題目預留位置？',
+        id:4,  name:'太空人的二三事',      coords:['H6','D5'],
+        desc:'小組介紹預留位置。', q:'題目預留位置？',
         opts:['A. 選項一','B. 選項二','C. 選項三'], ans:'A'
     },
     {
-        id:15, name:'尖上的音樂', coord:'C4',
-        desc:'小組介紹預留位置。',
-        q:'題目預留位置？',
+        id:5,  name:'有去無回的黑洞',      coords:['B8','H5'],
+        desc:'小組介紹預留位置。', q:'題目預留位置？',
         opts:['A. 選項一','B. 選項二','C. 選項三'], ans:'A'
     },
     {
-        id:16, name:'別"壺"鬧了啦！', coord:'D2',
-        desc:'小組介紹預留位置。',
-        q:'題目預留位置？',
+        id:6,  name:'外星人與他們的產地',  coords:['G6','C4'],
+        desc:'小組介紹預留位置。', q:'題目預留位置？',
+        opts:['A. 選項一','B. 選項二','C. 選項三'], ans:'A'
+    },
+    {
+        id:7,  name:'星球生存組',          coords:['F7','E4'],
+        desc:'小組介紹預留位置。', q:'題目預留位置？',
+        opts:['A. 選項一','B. 選項二','C. 選項三'], ans:'A'
+    },
+    {
+        id:8,  name:'星座神話組',          coords:['A9','J5'],
+        desc:'小組介紹預留位置。', q:'題目預留位置？',
+        opts:['A. 選項一','B. 選項二','C. 選項三'], ans:'A'
+    },
+    {
+        id:9,  name:'神「棋」寶貝',        coords:['G2','C5'],
+        desc:'小組介紹預留位置。', q:'題目預留位置？',
+        opts:['A. 選項一','B. 選項二','C. 選項三'], ans:'A'
+    },
+    {
+        id:10, name:'體操館',              coords:['D6','K5'],
+        desc:'小組介紹預留位置。', q:'題目預留位置？',
+        opts:['A. 選項一','B. 選項二','C. 選項三'], ans:'A'
+    },
+    {
+        id:11, name:'小小滑冰',            coords:['B3','F1'],
+        desc:'小組介紹預留位置。', q:'題目預留位置？',
+        opts:['A. 選項一','B. 選項二','C. 選項三'], ans:'A'
+    },
+    {
+        id:12, name:'羽球組',              coords:['C7','E5'],
+        desc:'小組介紹預留位置。', q:'題目預留位置？',
+        opts:['A. 選項一','B. 選項二','C. 選項三'], ans:'A'
+    },
+    {
+        id:13, name:'足球組',              coords:['D4','J6'],
+        desc:'小組介紹預留位置。', q:'題目預留位置？',
+        opts:['A. 選項一','B. 選項二','C. 選項三'], ans:'A'
+    },
+    {
+        id:14, name:'鐵人三項組',          coords:['C3','G5'],
+        desc:'小組介紹預留位置。', q:'題目預留位置？',
+        opts:['A. 選項一','B. 選項二','C. 選項三'], ans:'A'
+    },
+    {
+        id:15, name:'腳尖上的音樂',        coords:['C1','F6'],
+        desc:'小組介紹預留位置。', q:'題目預留位置？',
+        opts:['A. 選項一','B. 選項二','C. 選項三'], ans:'A'
+    },
+    {
+        id:16, name:'別"壺"鬧了啦！',     coords:['H4','A8'],
+        desc:'小組介紹預留位置。', q:'題目預留位置？',
         opts:['A. 選項一','B. 選項二','C. 選項三'], ans:'A'
     }
 ];
@@ -406,15 +527,18 @@ var GROUPS = [
 // ══════════════════════════════════════════════
 // 狀態
 // ══════════════════════════════════════════════
-var currentGroup = null;
-var currentTool  = 'pen';
-var isPainting   = false;
-var filledCells  = new Set();
-var qrScanner    = null;
+var currentGroup    = null;
+var isPainting      = false;
+var dragAction      = null;
+var filledCells     = new Set();
+var completedGroups = new Set();
+var qrScanner       = null;
 
-var ROWS = ['I','H','G','F','E','D','C','B','A'];
-var COLS = [1,2,3,4,5,6];
-var STORAGE_KEY = 'pbl_grid_v1';
+var STORAGE_COMPLETED = 'pbl_completed_v1';
+
+var ROWS = ['K','J','I','H','G','F','E','D','C','B','A'];
+var COLS = [1,2,3,4,5,6,7,8,9];
+var STORAGE_KEY = 'pbl_grid_v2';
 
 // ══════════════════════════════════════════════
 // 畫面切換
@@ -423,8 +547,9 @@ function showScreen(id) {
     document.querySelectorAll('.screen').forEach(function(s) {
         s.classList.remove('active');
     });
-    if (id === 'screen-grid') setTool('pen');
     document.getElementById(id).classList.add('active');
+    if (id === 'screen-grid') resizeGrid();
+    if (id === 'screen-home') updateProgress();
 }
 
 // ══════════════════════════════════════════════
@@ -432,6 +557,7 @@ function showScreen(id) {
 // ══════════════════════════════════════════════
 function startScanner() {
     if (qrScanner) { qrScanner.stop().catch(function(){}); qrScanner = null; }
+    buildDemoButtons();
     showScreen('screen-scanner');
     qrScanner = new Html5Qrcode('qr-reader');
     qrScanner.start(
@@ -502,9 +628,13 @@ function checkAnswer(selected) {
     });
 
     if (correct) {
-        var c = currentGroup.coord;
-        document.getElementById('congrats-coord').textContent =
-            '(' + c.charAt(0) + ', ' + c.slice(1) + ')';
+        playSuccessSound();
+        completedGroups.add(currentGroup.id);
+        localStorage.setItem(STORAGE_COMPLETED, JSON.stringify(Array.from(completedGroups)));
+        var coordText = currentGroup.coords.map(function(c) {
+            return '(' + c.charAt(0) + ', ' + c.slice(1) + ')';
+        }).join('  ');
+        document.getElementById('congrats-coord').textContent = coordText;
         setTimeout(function() { showScreen('screen-congrats'); }, 600);
     } else {
         setTimeout(function() {
@@ -555,24 +685,32 @@ function buildGrid() {
     // 滑鼠事件
     wrap.addEventListener('mousedown', function(e) {
         var cell = e.target.closest('.gc');
-        if (cell) { isPainting = true; paint(cell); }
+        if (cell) {
+            isPainting = true;
+            dragAction = filledCells.has(cell.dataset.k) ? 'erase' : 'fill';
+            paint(cell);
+        }
     });
     wrap.addEventListener('mousemove', function(e) {
         if (isPainting) { var cell = e.target.closest('.gc'); if(cell) paint(cell); }
     });
-    document.addEventListener('mouseup', function() { isPainting = false; });
+    document.addEventListener('mouseup', function() { isPainting = false; dragAction = null; });
 
     // 觸控事件（手機）
     wrap.addEventListener('touchstart', function(e) {
         e.preventDefault();
-        isPainting = true;
-        paintAtTouch(e.touches[0]);
+        var el = document.elementFromPoint(e.touches[0].clientX, e.touches[0].clientY);
+        if (el && el.classList.contains('gc')) {
+            isPainting = true;
+            dragAction = filledCells.has(el.dataset.k) ? 'erase' : 'fill';
+            paint(el);
+        }
     }, { passive: false });
     wrap.addEventListener('touchmove', function(e) {
         e.preventDefault();
         if (isPainting) paintAtTouch(e.touches[0]);
     }, { passive: false });
-    wrap.addEventListener('touchend', function() { isPainting = false; });
+    wrap.addEventListener('touchend', function() { isPainting = false; dragAction = null; });
 }
 
 function paintAtTouch(touch) {
@@ -582,7 +720,7 @@ function paintAtTouch(touch) {
 
 function paint(cell) {
     var k = cell.dataset.k;
-    if (currentTool === 'pen') {
+    if (dragAction === 'fill') {
         cell.classList.add('filled');
         filledCells.add(k);
     } else {
@@ -591,10 +729,18 @@ function paint(cell) {
     }
 }
 
-function setTool(t) {
-    currentTool = t;
-    document.getElementById('tool-pen').classList.toggle('active', t === 'pen');
-    document.getElementById('tool-eraser').classList.toggle('active', t === 'eraser');
+function resizeGrid() {
+    var area = document.getElementById('grid-area');
+    if (!area) return;
+    var aW = area.clientWidth - 16;
+    var aH = area.clientHeight - 16;
+    var labelSz = 22;
+    var gap = 3;
+    var cW = Math.floor((aW - labelSz - gap * COLS.length) / COLS.length);
+    var cH = Math.floor((aH - labelSz - gap * (ROWS.length + 1)) / ROWS.length);
+    var cellSz = Math.max(22, Math.min(cW, cH, 52));
+    document.documentElement.style.setProperty('--cell-sz', cellSz + 'px');
+    document.documentElement.style.setProperty('--label-sz', labelSz + 'px');
 }
 
 function saveGrid() {
@@ -610,14 +756,48 @@ function loadGrid() {
 }
 
 // ══════════════════════════════════════════════
+// 音效
+// ══════════════════════════════════════════════
+function playSuccessSound() {
+    try {
+        var ctx = new (window.AudioContext || window.webkitAudioContext)();
+        [523.25, 659.25, 783.99].forEach(function(freq, i) {
+            var osc  = ctx.createOscillator();
+            var gain = ctx.createGain();
+            osc.connect(gain);
+            gain.connect(ctx.destination);
+            osc.type = 'sine';
+            osc.frequency.value = freq;
+            var t = ctx.currentTime + i * 0.13;
+            gain.gain.setValueAtTime(0.22, t);
+            gain.gain.exponentialRampToValueAtTime(0.001, t + 0.28);
+            osc.start(t);
+            osc.stop(t + 0.28);
+        });
+    } catch(e) {}
+}
+
+// ══════════════════════════════════════════════
+// 進度
+// ══════════════════════════════════════════════
+function updateProgress() {
+    var n = completedGroups.size;
+    var total = GROUPS.length;
+    document.getElementById('progress-count').textContent = n;
+    document.getElementById('progress-bar').style.width = Math.round(n / total * 100) + '%';
+}
+
+// ══════════════════════════════════════════════
 // 測試按鈕
 // ══════════════════════════════════════════════
 function buildDemoButtons() {
     var dg = document.getElementById('demo-grid');
+    dg.innerHTML = '';
     GROUPS.forEach(function(g) {
-        var btn = document.createElement('button');
-        btn.className = 'demo-btn';
-        btn.textContent = '第' + g.id + '組';
+        var btn  = document.createElement('button');
+        var done = completedGroups.has(g.id);
+        btn.className = 'demo-btn' + (done ? ' done' : '');
+        btn.textContent = (done ? '✓ ' : '') + '第' + g.id + '組';
         btn.onclick = function() {
             if (qrScanner) { qrScanner.stop().catch(function(){}); qrScanner = null; }
             loadGroup(g.id);
@@ -629,9 +809,32 @@ function buildDemoButtons() {
 // ══════════════════════════════════════════════
 // 啟動
 // ══════════════════════════════════════════════
+function openModal() {
+    document.getElementById('modal-help').classList.add('show');
+}
+function closeModal() {
+    document.getElementById('modal-help').classList.remove('show');
+    localStorage.setItem('pbl_seen_intro', '1');
+}
+// 點遮罩關閉
+document.getElementById('modal-help').addEventListener('click', function(e) {
+    if (e.target === this) closeModal();
+});
+
+// 讀取已完成紀錄
+(function() {
+    var saved = localStorage.getItem(STORAGE_COMPLETED);
+    if (saved) completedGroups = new Set(JSON.parse(saved));
+})();
+
 loadGrid();
 buildGrid();
 buildDemoButtons();
+updateProgress();
+window.addEventListener('resize', resizeGrid);
+
+// 首次使用自動開啟說明
+if (!localStorage.getItem('pbl_seen_intro')) openModal();
 
 if ('serviceWorker' in navigator) {
     navigator.serviceWorker.register('./sw.js');
