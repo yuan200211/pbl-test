@@ -186,6 +186,18 @@
         }
         .gc.filled { background: #111; border-color: #111; }
 
+        /* ── 座標提示條 ── */
+        .coord-hint {
+            display: flex; align-items: center; justify-content: space-between;
+            background: #22c55e; color: white;
+            padding: 10px 16px; gap: 10px;
+            font-size: 0.88rem; font-weight: 600;
+        }
+        .coord-hint-close {
+            background: none; border: none; color: white;
+            font-size: 1rem; cursor: pointer; padding: 0 4px; opacity: 0.8;
+        }
+
         /* ── 儲存提示 ── */
         .toast {
             position: fixed; bottom: 30px;
@@ -344,11 +356,12 @@
             <div class="tip-list">
                 <div class="tip">點格子 → 填色標記</div>
                 <div class="tip">再點一次已填的格子 → 清除</div>
-                <div class="tip">點「儲存」可保留你的進度，下次開啟還在</div>
+                <div class="tip">進度會自動儲存，關掉後重開也不會消失</div>
             </div>
         </div>
 
         <button class="modal-cta" onclick="closeModal()">開始探索！</button>
+        <button style="margin-top:10px;background:none;border:none;font-size:0.8rem;color:#aaa;cursor:pointer;width:100%;padding:6px;" onclick="neverShowModal()">不要再出現</button>
     </div>
 </div>
 
@@ -422,6 +435,10 @@
 <div id="screen-grid" class="screen">
     <div class="nav" style="justify-content:center;">
         <div class="nav-title">座標地圖</div>
+    </div>
+    <div class="coord-hint" id="coord-hint" style="display:none;">
+        <span id="coord-hint-text"></span>
+        <button class="coord-hint-close" onclick="document.getElementById('coord-hint').style.display='none'">✕</button>
     </div>
     <div class="toolbar">
         <button class="save-btn" style="background:#555;" onclick="startScanner()">返回掃描</button>
@@ -527,6 +544,7 @@ var GROUPS = [
 // 狀態
 // ══════════════════════════════════════════════
 var currentGroup    = null;
+var lastCoords      = '';
 var isPainting      = false;
 var dragAction      = null;
 var filledCells     = new Set();
@@ -547,7 +565,13 @@ function showScreen(id) {
         s.classList.remove('active');
     });
     document.getElementById(id).classList.add('active');
-    if (id === 'screen-grid') resizeGrid();
+    if (id === 'screen-grid') {
+        resizeGrid();
+        if (lastCoords) {
+            document.getElementById('coord-hint-text').textContent = '標記你的座標：' + lastCoords;
+            document.getElementById('coord-hint').style.display = 'flex';
+        }
+    }
     if (id === 'screen-home') updateProgress();
 }
 
@@ -638,6 +662,7 @@ function checkAnswer(selected) {
         var coordText = currentGroup.coords.map(function(c) {
             return '(' + c.charAt(0) + ', ' + c.slice(1) + ')';
         }).join('  ');
+        lastCoords = coordText;
         document.getElementById('congrats-coord').textContent = coordText;
         setTimeout(function() { showScreen('screen-congrats'); }, 600);
     } else {
@@ -819,7 +844,10 @@ function openModal() {
 }
 function closeModal() {
     document.getElementById('modal-help').classList.remove('show');
-    localStorage.setItem('pbl_seen_intro', '1');
+}
+function neverShowModal() {
+    localStorage.setItem('pbl_no_intro', '1');
+    closeModal();
 }
 // 點遮罩關閉
 document.getElementById('modal-help').addEventListener('click', function(e) {
@@ -843,10 +871,9 @@ window.addEventListener('resize', resizeGrid);
     var gParam = parseInt(new URLSearchParams(window.location.search).get('g'));
     if (gParam >= 1 && gParam <= 16) {
         loadGroup(gParam);
-        return;
     }
-    // 首次使用自動開啟說明
-    if (!localStorage.getItem('pbl_seen_intro')) openModal();
+    // 每次進入都顯示說明，除非點過「不要再出現」
+    if (!localStorage.getItem('pbl_no_intro')) openModal();
 })();
 
 if ('serviceWorker' in navigator) {
