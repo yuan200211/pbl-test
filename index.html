@@ -424,7 +424,6 @@
         <div class="nav-title">座標地圖</div>
     </div>
     <div class="toolbar">
-        <button class="save-btn" onclick="saveGrid()">儲存</button>
         <button class="save-btn" style="background:#555;" onclick="startScanner()">返回掃描</button>
         <button class="save-btn" style="background:#333;" onclick="showScreen('screen-home')">返回主頁</button>
     </div>
@@ -565,6 +564,11 @@ function startScanner() {
         { fps: 10, qrbox: { width: 230, height: 230 } },
         function(text) {
             var id = parseInt(text);
+            if (isNaN(id)) {
+                try {
+                    id = parseInt(new URL(text).searchParams.get('g'));
+                } catch(e) {}
+            }
             if (id >= 1 && id <= 16) {
                 stopScanner();
                 loadGroup(id);
@@ -727,6 +731,7 @@ function paint(cell) {
         cell.classList.remove('filled');
         filledCells.delete(k);
     }
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(Array.from(filledCells)));
 }
 
 function resizeGrid() {
@@ -833,8 +838,16 @@ buildDemoButtons();
 updateProgress();
 window.addEventListener('resize', resizeGrid);
 
-// 首次使用自動開啟說明
-if (!localStorage.getItem('pbl_seen_intro')) openModal();
+// 從 URL 參數直接開啟指定組別（?g=N）
+(function() {
+    var gParam = parseInt(new URLSearchParams(window.location.search).get('g'));
+    if (gParam >= 1 && gParam <= 16) {
+        loadGroup(gParam);
+        return;
+    }
+    // 首次使用自動開啟說明
+    if (!localStorage.getItem('pbl_seen_intro')) openModal();
+})();
 
 if ('serviceWorker' in navigator) {
     navigator.serviceWorker.register('./sw.js');
