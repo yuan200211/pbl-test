@@ -5,11 +5,24 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>PBL 專題發表</title>
     <style>
+        /* ── 品牌配色變數 ── */
+        :root {
+            --pink:   #EFAEA6;
+            --green:  #AAC95E;
+            --blue:   #7DC5E8;
+            --lblue:  #DBF0FC;
+            --dblue:  #4A72B0;
+            --purple: #7177B2;
+            --dark:   #222A44;
+            --cell-sz: 38px;
+            --label-sz: 22px;
+        }
+
         * { box-sizing: border-box; margin: 0; padding: 0; }
 
         body {
             font-family: -apple-system, BlinkMacSystemFont, 'Helvetica Neue', Arial, sans-serif;
-            background: #f0f0f0;
+            background: var(--lblue);
             min-height: 100vh;
         }
 
@@ -28,9 +41,9 @@
             width: 100%;
         }
         .btn:active { opacity: 0.7; }
-        .btn-dark  { background: #111; color: white; }
-        .btn-light { background: white; color: #111; border: 2px solid #ddd; }
-        .btn-green { background: #22c55e; color: white; }
+        .btn-dark  { background: var(--dblue); color: white; }
+        .btn-light { background: white; color: var(--dblue); border: 2px solid var(--blue); }
+        .btn-green { background: var(--green); color: white; }
 
         /* ── 頂部導覽 ── */
         .nav {
@@ -38,24 +51,25 @@
             align-items: center;
             padding: 14px 18px;
             background: white;
-            border-bottom: 1px solid #eee;
+            border-bottom: 2px solid var(--lblue);
             position: sticky; top: 0; z-index: 10;
         }
         .nav-back {
             background: none; border: none;
-            font-size: 0.95rem; color: #111;
+            font-size: 0.95rem; color: var(--dblue);
             cursor: pointer; padding: 4px 8px; margin: -4px -8px;
         }
-        .nav-title { flex: 1; text-align: center; font-size: 1rem; font-weight: 600; }
+        .nav-title { flex: 1; text-align: center; font-size: 1rem; font-weight: 600; color: var(--dblue); }
         .nav-spacer { width: 50px; }
 
         /* ── 主頁 ── */
         #screen-home {
             align-items: center; justify-content: center;
             padding: 48px 28px; gap: 12px; text-align: center;
+            background: white;
         }
-        .home-title    { font-size: 2rem; font-weight: 800; color: #111; }
-        .home-subtitle { font-size: 0.95rem; color: #777; margin-bottom: 16px; }
+        .home-title    { font-size: 2rem; font-weight: 800; color: var(--dblue); }
+        .home-subtitle { font-size: 0.95rem; color: var(--purple); margin-bottom: 16px; }
         .home-buttons  { display: flex; flex-direction: column; gap: 14px; width: 100%; max-width: 340px; }
 
         /* ── 掃描頁 ── */
@@ -63,75 +77,107 @@
             flex: 1; display: flex; flex-direction: column;
             align-items: center; padding: 20px 16px; gap: 18px;
         }
-        .scanner-hint { font-size: 0.9rem; color: #666; text-align: center; }
+        .scanner-hint { font-size: 0.9rem; color: var(--purple); text-align: center; }
         #qr-reader { width: 100%; max-width: 340px; border-radius: 12px; overflow: hidden; }
-        .demo-box {
-            width: 100%; max-width: 340px;
-            background: white; border-radius: 14px; padding: 18px;
+        /* ── 打卡進度頁 ── */
+        .progress-body {
+            flex: 1; padding: 16px 20px; overflow-y: auto;
+            display: flex; flex-direction: column; gap: 10px;
+            max-width: 500px; margin: 0 auto; width: 100%;
         }
-        .demo-label {
-            font-size: 0.78rem; color: #aaa;
-            text-align: center; margin-bottom: 12px;
+        .prog-summary {
+            text-align: center; padding: 18px 12px;
+            background: var(--lblue); border-radius: 14px; margin-bottom: 2px;
         }
-        .demo-grid {
-            display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px;
+        .prog-summary-count { font-size: 2.2rem; font-weight: 800; color: var(--dblue); line-height: 1.2; }
+        .prog-summary-label { font-size: 0.85rem; color: var(--purple); margin-top: 2px; }
+        .prog-item {
+            display: flex; align-items: center; gap: 14px;
+            padding: 13px 16px; border-radius: 12px;
+            background: white; border: 1.5px solid var(--lblue);
         }
-        .demo-btn {
-            padding: 10px 4px; background: #f5f5f5;
-            border: 1px solid #ddd; border-radius: 8px;
-            font-size: 0.82rem; font-weight: 600;
-            cursor: pointer; color: #333;
+        .prog-item.done { background: var(--lblue); border-color: var(--blue); }
+        .prog-icon {
+            width: 30px; height: 30px; border-radius: 50%; flex-shrink: 0;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 0.85rem; font-weight: 800;
         }
-        .demo-btn:active { background: #e0e0e0; }
+        .prog-icon.done { background: var(--green); color: white; }
+        .prog-icon.todo { background: white; color: var(--purple); border: 1.5px solid var(--blue); }
+        .prog-name { flex: 1; font-size: 0.95rem; font-weight: 600; color: var(--dblue); }
+        .congrats-done { font-size: 1rem; font-weight: 700; color: var(--green); }
+
+        /* ── 打卡進度二欄格 ── */
+        .prog-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 8px;
+        }
+        .prog-grid .prog-item {
+            flex-direction: column;
+            align-items: center;
+            padding: 14px 8px;
+            gap: 8px;
+            text-align: center;
+        }
+        .prog-grid .prog-name { font-size: 0.82rem; line-height: 1.35; flex: none; }
 
         /* ── 小組介紹頁 ── */
         .group-body {
             flex: 1; padding: 24px 20px;
             display: flex; flex-direction: column;
             gap: 18px; max-width: 500px; margin: 0 auto; width: 100%;
+            overflow-y: auto;
         }
-        .group-photo {
-            width: 100%; aspect-ratio: 16/9;
-            background: #ddd; border-radius: 14px;
-            display: flex; align-items: center; justify-content: center;
-            color: #aaa; font-size: 0.9rem;
-        }
-        .group-name { font-size: 1.6rem; font-weight: 800; color: #111; }
-        .group-desc { font-size: 1rem; color: #444; line-height: 1.75; }
+        .group-name { font-size: 1.6rem; font-weight: 800; color: var(--dblue); }
+        .group-desc { font-size: 1rem; color: var(--dark); line-height: 1.75; }
 
-        /* ── 題目頁 ── */
-        .question-body {
-            flex: 1; padding: 28px 20px;
-            display: flex; flex-direction: column;
-            gap: 22px; max-width: 500px; margin: 0 auto; width: 100%;
-        }
-        .question-text { font-size: 1.2rem; font-weight: 700; color: #111; line-height: 1.5; }
+        .question-text { font-size: 1.2rem; font-weight: 700; color: var(--dblue); line-height: 1.5; }
         .options { display: flex; flex-direction: column; gap: 12px; }
         .opt-btn {
             padding: 16px 20px;
-            background: white; border: 2px solid #e0e0e0;
+            background: white; border: 2px solid var(--lblue);
             border-radius: 12px; font-size: 1rem;
-            text-align: left; cursor: pointer; color: #111;
+            text-align: left; cursor: pointer; color: var(--dark);
         }
-        .opt-btn:active { background: #f5f5f5; }
-        .opt-btn.correct { border-color: #22c55e; background: #f0fdf4; }
-        .opt-btn.wrong   { border-color: #ef4444; background: #fef2f2; }
-        .opt-key { font-weight: 800; margin-right: 10px; }
+        .opt-btn:active { background: var(--lblue); }
+        .opt-btn.correct { border-color: var(--green); background: #f3faec; }
+        .opt-btn.wrong   { border-color: var(--pink);  background: #fdf0ee; }
+        .opt-key { font-weight: 800; margin-right: 10px; color: var(--dblue); }
+
+        /* ── 答題區標籤 & 回饋 ── */
+        .q-section-label {
+            font-size: 0.75rem; font-weight: 700; color: var(--purple);
+            letter-spacing: 0.08em;
+            padding-top: 14px; border-top: 1.5px solid var(--lblue);
+        }
+        .q-feedback {
+            font-size: 0.92rem; font-weight: 600;
+            color: var(--pink); text-align: center; min-height: 1.4em;
+        }
+
+        /* ── 座標地圖操作提示 ── */
+        .grid-tip {
+            font-size: 0.82rem; color: var(--purple);
+            text-align: center; padding: 6px 16px;
+            background: white; border-bottom: 1px solid var(--lblue);
+        }
 
         /* ── 恭喜頁 ── */
         .congrats-body {
             flex: 1; display: flex; flex-direction: column;
             align-items: center; justify-content: center;
             padding: 40px 24px; gap: 22px; text-align: center;
+            background: white;
         }
-        .congrats-title { font-size: 2.8rem; font-weight: 800; color: #111; }
-        .congrats-sub   { font-size: 1rem; color: #666; }
+        .congrats-title { font-size: 2.8rem; font-weight: 800; color: var(--dblue); }
+        .congrats-sub   { font-size: 1rem; color: var(--purple); }
         .coord-box {
-            background: #111; color: white;
+            background: var(--dblue); color: white;
             border-radius: 16px; padding: 24px 48px;
         }
         .coord-box-label {
-            font-size: 0.75rem; color: #aaa;
+            font-size: 0.75rem; color: var(--lblue);
             letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: 6px;
         }
         .coord-big {
@@ -144,16 +190,15 @@
         .congrats-btns { display: flex; flex-direction: column; gap: 12px; width: 100%; max-width: 320px; }
 
         /* ── 座標格子頁 ── */
-        :root { --cell-sz: 38px; --label-sz: 22px; }
-        #screen-grid { background: #f0f0f0; }
+        #screen-grid { background: var(--lblue); }
         .toolbar {
             display: flex; gap: 8px; padding: 10px 16px;
-            background: white; border-bottom: 1px solid #eee;
+            background: white; border-bottom: 2px solid var(--lblue);
             align-items: center; justify-content: center;
         }
         .save-btn {
             padding: 8px 16px;
-            background: #22c55e; color: white;
+            background: var(--dblue); color: white;
             border: none; border-radius: 8px;
             font-size: 0.85rem; font-weight: 700; cursor: pointer;
         }
@@ -174,46 +219,34 @@
         }
         .gl {
             display: flex; align-items: center; justify-content: center;
-            font-size: 0.7rem; color: #999; font-weight: 600;
+            font-size: 0.7rem; color: var(--purple); font-weight: 600;
         }
         .gc {
             width: var(--cell-sz); height: var(--cell-sz);
-            border: 1.5px solid #ddd;
+            border: 1.5px solid var(--blue);
             border-radius: 3px;
-            background: #f8f8f8;
+            background: white;
             cursor: pointer;
             touch-action: none;
         }
-        .gc.filled { background: #111; border-color: #111; }
+        .gc.filled { background: var(--dblue); border-color: var(--dblue); }
 
         /* ── 座標提示條 ── */
         .coord-hint {
             display: flex; align-items: center; justify-content: space-between;
-            background: #22c55e; color: white;
+            background: var(--pink); color: var(--dark);
             padding: 10px 16px; gap: 10px;
             font-size: 0.88rem; font-weight: 600;
         }
         .coord-hint-close {
-            background: none; border: none; color: white;
+            background: none; border: none; color: var(--dark);
             font-size: 1rem; cursor: pointer; padding: 0 4px; opacity: 0.8;
         }
-
-        /* ── 儲存提示 ── */
-        .toast {
-            position: fixed; bottom: 30px;
-            left: 50%; transform: translateX(-50%);
-            background: #111; color: white;
-            padding: 11px 26px; border-radius: 30px;
-            font-size: 0.9rem; font-weight: 600;
-            opacity: 0; transition: opacity 0.3s;
-            pointer-events: none; z-index: 200;
-        }
-        .toast.show { opacity: 1; }
 
         /* ── 說明彈窗 ── */
         .modal-overlay {
             position: fixed; inset: 0;
-            background: rgba(0,0,0,0.5);
+            background: rgba(74,114,176,0.35);
             display: flex; align-items: center; justify-content: center;
             z-index: 300; padding: 20px;
             opacity: 0; pointer-events: none;
@@ -227,43 +260,39 @@
             transform: translateY(16px);
             transition: transform 0.25s;
             max-height: 90vh; overflow-y: auto;
+            border-top: 5px solid var(--dblue);
         }
         .modal-overlay.show .modal-box { transform: translateY(0); }
         .modal-close {
             position: absolute; top: 16px; right: 16px;
-            background: #f0f0f0; border: none;
+            background: var(--lblue); border: none;
             width: 32px; height: 32px; border-radius: 50%;
-            font-size: 1rem; cursor: pointer; color: #555;
+            font-size: 1rem; cursor: pointer; color: var(--dblue);
             display: flex; align-items: center; justify-content: center;
         }
-        .modal-close:active { background: #ddd; }
-        .modal-title { font-size: 1.4rem; font-weight: 800; color: #111; margin-bottom: 6px; }
-        .modal-lead  { font-size: 0.92rem; color: #555; line-height: 1.6; margin-bottom: 20px; }
+        .modal-close:active { background: var(--blue); }
+        .modal-title { font-size: 1.4rem; font-weight: 800; color: var(--dblue); margin-bottom: 6px; }
+        .modal-lead  { font-size: 0.92rem; color: var(--dark); line-height: 1.6; margin-bottom: 20px; }
         .modal-section { margin-bottom: 18px; }
         .modal-section-title {
-            font-size: 0.75rem; font-weight: 700; color: #aaa;
+            font-size: 0.75rem; font-weight: 700; color: var(--purple);
             letter-spacing: 0.08em; text-transform: uppercase;
             margin-bottom: 10px;
         }
         .step-list { display: flex; flex-direction: column; gap: 10px; }
-        .step {
-            display: flex; gap: 12px; align-items: flex-start;
-        }
+        .step { display: flex; gap: 12px; align-items: flex-start; }
         .step-num {
             min-width: 26px; height: 26px;
-            background: #111; color: white;
+            background: var(--dblue); color: white;
             border-radius: 50%; font-size: 0.8rem; font-weight: 800;
             display: flex; align-items: center; justify-content: center;
         }
-        .step-text { font-size: 0.92rem; color: #333; line-height: 1.5; padding-top: 3px; }
-        .step-text strong { color: #111; }
-        .tip-list { display: flex; flex-direction: column; gap: 8px; }
-        .tip { font-size: 0.88rem; color: #555; line-height: 1.5; padding-left: 14px; position: relative; }
-        .tip::before { content: '·'; position: absolute; left: 0; color: #aaa; }
+        .step-text { font-size: 0.92rem; color: var(--dark); line-height: 1.5; padding-top: 3px; }
+        .step-text strong { color: var(--dblue); }
         .modal-cta {
             margin-top: 22px;
             padding: 15px;
-            background: #111; color: white;
+            background: var(--dblue); color: white;
             border: none; border-radius: 12px;
             font-size: 1rem; font-weight: 700;
             width: 100%; cursor: pointer;
@@ -276,31 +305,27 @@
             display: flex; flex-direction: column; gap: 6px;
         }
         .progress-label {
-            font-size: 0.88rem; color: #555; text-align: center;
+            font-size: 0.88rem; color: var(--purple); text-align: center;
         }
-        .progress-label span { font-weight: 800; color: #111; }
+        .progress-label span { font-weight: 800; color: var(--dblue); }
         .progress-bar-wrap {
-            height: 8px; background: #e5e5e5; border-radius: 99px; overflow: hidden;
+            height: 8px; background: var(--lblue); border-radius: 99px; overflow: hidden;
         }
         .progress-bar-fill {
-            height: 100%; background: #22c55e; border-radius: 99px;
+            height: 100%; background: var(--green); border-radius: 99px;
             width: 0%; transition: width 0.4s ease;
         }
 
-        /* ── 測試按鈕（已完成）── */
-        .demo-btn.done {
-            background: #111; color: white; border-color: #111;
-        }
 
         /* ── 說明按鈕（主頁右上角）── */
         .help-btn {
             position: absolute; top: 18px; right: 18px;
-            background: #f0f0f0; border: none;
+            background: var(--lblue); border: none;
             width: 36px; height: 36px; border-radius: 50%;
-            font-size: 1rem; font-weight: 700; color: #555;
+            font-size: 1rem; font-weight: 700; color: var(--dblue);
             cursor: pointer;
         }
-        .help-btn:active { background: #ddd; }
+        .help-btn:active { background: var(--blue); }
         #screen-home { position: relative; }
     </style>
 </head>
@@ -316,9 +341,13 @@
         <div class="progress-bar-wrap"><div class="progress-bar-fill" id="progress-bar"></div></div>
     </div>
     <div class="home-buttons">
-        <button class="btn btn-dark"  id="btn-scan" onclick="startScanner()">掃描任務</button>
+        <button class="btn btn-dark" onclick="startScanner()">掃描任務</button>
         <button class="btn btn-light" onclick="showScreen('screen-grid')">座標地圖</button>
+        <button class="btn btn-light" onclick="showScreen('screen-progress')">打卡進度</button>
     </div>
+    <button onclick="resetAll()" style="margin-top:8px;background:none;border:none;font-size:0.8rem;color:#bbb;cursor:pointer;padding:6px;">重置所有進度</button>
+    <button onclick="testComplete()" style="background:none;border:none;font-size:0.8rem;color:#bbb;cursor:pointer;padding:6px;">【測試】全部完成</button>
+    <div style="margin-top:auto;padding-top:24px;font-size:0.72rem;color:#ccc;letter-spacing:0.05em;">© ART &amp; NUMERACY ACADEMY</div>
 </div>
 
 <!-- ════════════════════ 說明彈窗 ════════════════════ -->
@@ -326,10 +355,10 @@
     <div class="modal-box">
         <button class="modal-close" onclick="closeModal()">✕</button>
 
-        <div class="modal-title">歡迎來到 PBL 發表！</div>
+        <div class="modal-title">歡迎來到 114 下學期<br>PBL 成果發表會！</div>
         <div class="modal-lead">
-            各組同學都有一個 QR Code，掃描後回答問題，<br>
-            答對就能獲得一組<strong>神秘座標</strong>。<br>
+            各攤位上都有一個 QR Code，掃描並回答問題，<br>
+            答對就能獲得一組<strong>神秘座標</strong>！<br>
             把所有座標都標在地圖上，就能揭開隱藏的圖案！
         </div>
 
@@ -351,17 +380,21 @@
             </div>
         </div>
 
-        <div class="modal-section">
-            <div class="modal-section-title">座標地圖操作</div>
-            <div class="tip-list">
-                <div class="tip">點格子 → 填色標記</div>
-                <div class="tip">再點一次已填的格子 → 清除</div>
-                <div class="tip">進度會自動儲存，關掉後重開也不會消失</div>
-            </div>
-        </div>
-
         <button class="modal-cta" onclick="closeModal()">開始探索！</button>
         <button style="margin-top:10px;background:none;border:none;font-size:0.8rem;color:#aaa;cursor:pointer;width:100%;padding:6px;" onclick="neverShowModal()">不要再出現</button>
+    </div>
+</div>
+
+<!-- ════════════════════ 全部完成彈窗 ════════════════════ -->
+<div class="modal-overlay" id="modal-complete">
+    <div class="modal-box">
+        <button class="modal-close" onclick="closeCompleteModal()">✕</button>
+        <div class="modal-title" style="text-align:center;font-size:1.8rem;">全部完成！</div>
+        <div class="modal-lead" style="text-align:center;margin-top:12px;">
+            恭喜你完成全部 16 組的任務！<br><br>
+            記得前往<strong>櫃檯</strong>領取<strong>小禮物</strong>和<strong>餐盒</strong>喔！
+        </div>
+        <button class="modal-cta" onclick="closeCompleteModal()">好的，馬上去！</button>
     </div>
 </div>
 
@@ -375,14 +408,19 @@
     <div class="scanner-body">
         <div class="scanner-hint">請將鏡頭對準各組的 QR Code</div>
         <div id="qr-reader"></div>
-        <div class="demo-box">
-            <div class="demo-label">— 測試用：直接選擇組別 —</div>
-            <div class="demo-grid" id="demo-grid"></div>
+        <div id="scanner-error" style="display:none; color:var(--pink); text-align:center; font-size:0.9rem; padding:16px 20px; background:#fdf0ee; border-radius:12px; width:100%; max-width:340px;">
+            無法開啟相機，請確認已允許相機權限，並使用 https 連線。
+        </div>
+        <div class="scanner-hint" style="margin-top:4px;">— 或手動輸入組別編號 —</div>
+        <div style="display:flex; gap:8px; width:100%; max-width:340px;">
+            <input id="manual-id-input" type="number" min="1" max="16" placeholder="1 ~ 16"
+                   style="flex:1; padding:12px; border:2px solid var(--blue); border-radius:10px; font-size:1rem; text-align:center; outline:none;">
+            <button onclick="manualLoadGroup()" style="padding:12px 16px; background:var(--dblue); color:white; border:none; border-radius:10px; font-size:0.9rem; font-weight:700; cursor:pointer;">確認</button>
         </div>
     </div>
 </div>
 
-<!-- ════════════════════ 小組介紹 ════════════════════ -->
+<!-- ════════════════════ 小組介紹 + 答題 ════════════════════ -->
 <div id="screen-group" class="screen">
     <div class="nav">
         <button class="nav-back" onclick="showScreen('screen-home')">← 返回</button>
@@ -390,23 +428,12 @@
         <div class="nav-spacer"></div>
     </div>
     <div class="group-body">
-        <div class="group-photo">[ 照片預留位置 ]</div>
-        <div class="group-name" id="gp-name">第一組</div>
-        <div class="group-desc" id="gp-desc">小組介紹內容預留位置。</div>
-        <button class="btn btn-dark" id="btn-start-q">開始答題</button>
-    </div>
-</div>
-
-<!-- ════════════════════ 選擇題 ════════════════════ -->
-<div id="screen-question" class="screen">
-    <div class="nav">
-        <button class="nav-back" onclick="showScreen('screen-group')">← 返回</button>
-        <div class="nav-title">小測驗</div>
-        <div class="nav-spacer"></div>
-    </div>
-    <div class="question-body">
-        <div class="question-text" id="q-text">問題載入中…</div>
-        <div class="options" id="q-options"></div>
+        <div class="group-name" id="gp-name"></div>
+        <div class="group-desc" id="gp-desc"></div>
+        <div class="q-section-label">小測驗 — 選出正確答案</div>
+        <div class="question-text" id="gp-q-text"></div>
+        <div class="options" id="gp-options"></div>
+        <div class="q-feedback" id="gp-feedback"></div>
     </div>
 </div>
 
@@ -420,37 +447,49 @@
     <div class="congrats-body">
         <div class="congrats-title">恭喜你！</div>
         <div class="congrats-sub">你完成了本次任務</div>
+        <div class="congrats-done" id="congrats-done"></div>
         <div class="coord-box">
             <div class="coord-box-label">你的座標</div>
             <div class="coord-big" id="congrats-coord">(D, 3)</div>
         </div>
         <div class="congrats-btns">
             <button class="btn btn-dark"  onclick="showScreen('screen-grid')">前往座標地圖</button>
+            <button class="btn btn-light" onclick="showScreen('screen-progress')">查看打卡進度</button>
             <button class="btn btn-light" onclick="showScreen('screen-home')">返回主頁</button>
         </div>
     </div>
 </div>
 
+<!-- ════════════════════ 打卡進度 ════════════════════ -->
+<div id="screen-progress" class="screen">
+    <div class="nav">
+        <button class="nav-back" onclick="showScreen('screen-home')">← 返回</button>
+        <div class="nav-title">打卡進度</div>
+        <div class="nav-spacer"></div>
+    </div>
+    <div class="progress-body" id="prog-body"></div>
+</div>
+
 <!-- ════════════════════ 座標格子 ════════════════════ -->
 <div id="screen-grid" class="screen">
-    <div class="nav" style="justify-content:center;">
+    <div class="nav">
+        <button class="nav-back" onclick="showScreen('screen-home')">← 返回</button>
         <div class="nav-title">座標地圖</div>
+        <div class="nav-spacer"></div>
     </div>
     <div class="coord-hint" id="coord-hint" style="display:none;">
         <span id="coord-hint-text"></span>
         <button class="coord-hint-close" onclick="document.getElementById('coord-hint').style.display='none'">✕</button>
     </div>
+    <div class="grid-tip">點格子標記座標，再點一次可取消，進度自動儲存</div>
     <div class="toolbar">
-        <button class="save-btn" style="background:#555;" onclick="startScanner()">返回掃描</button>
-        <button class="save-btn" style="background:#333;" onclick="showScreen('screen-home')">返回主頁</button>
+        <button class="save-btn" style="background:#7177B2;" onclick="startScanner()">返回掃描</button>
+        <button class="save-btn" style="background:#7DC5E8;" onclick="showScreen('screen-home')">返回主頁</button>
     </div>
     <div class="grid-area" id="grid-area">
         <div class="grid-wrap" id="grid-wrap"></div>
     </div>
 </div>
-
-<!-- 儲存提示 -->
-<div class="toast" id="toast">已儲存</div>
 
 <script src="html5-qrcode.min.js"></script>
 <script>
@@ -459,84 +498,100 @@
 // ══════════════════════════════════════════════
 var GROUPS = [
     {
-        id:1,  name:'繪夢日光：神話',      coords:['K6','F5'],
-        desc:'小組介紹預留位置。', q:'題目預留位置？',
-        opts:['A. 選項一','B. 選項二','C. 選項三'], ans:'A'
+        id:1,  name:'別壺鬧了啦！',    coords:['H4','A8'],
+        desc:'冰壺不只是推石頭——「刷冰」才是控制方向、減少摩擦力的關鍵！這組從 16 世紀蘇格蘭到 1998 年冬奧，深挖冰壺背後的物理秘密。',
+        q:'冰壺賽場上，「刷冰」的用意是？',
+        opts:['A. 增加摩擦力','B. 減少摩擦力','C. 好玩而已'], ans:'B'
     },
     {
-        id:2,  name:'地球「圓」來如此',    coords:['F8','H3'],
-        desc:'小組介紹預留位置。', q:'題目預留位置？',
-        opts:['A. 選項一','B. 選項二','C. 選項三'], ans:'A'
+        id:2,  name:'腳尖上的音樂',        coords:['C1','F6'],
+        desc:'芭蕾足尖鞋、踢踏鐵片鞋、國標露趾設計——每雙舞鞋都有故事！這組從「鞋子」切入研究舞蹈，解密每種舞蹈背後的歷史與文化。',
+        q:'跳霹靂舞需要穿哪一種舞鞋？',
+        opts:['A. 足尖鞋','B. 踢躂舞鞋','C. 沒有特定哪一種'], ans:'C'
     },
     {
-        id:3,  name:'飛向宇宙浩瀚無垠',   coords:['B2','G9'],
-        desc:'小組介紹預留位置。', q:'題目預留位置？',
-        opts:['A. 選項一','B. 選項二','C. 選項三'], ans:'A'
+        id:3,  name:'鐵人闖三關',          coords:['C3','G5'],
+        desc:'1978 年夏威夷，游泳→自行車→跑步，鐵人三項就此誕生！這組拆解了裝備細節與項目轉換技巧，找出「堅持到底」的核心意義。',
+        q:'鐵人三項比賽，三種運動的先後順序哪一個正確？',
+        opts:['A. 跑步、游泳、自行車','B. 自行車、跑步、游泳','C. 游泳、自行車、跑步'], ans:'C'
     },
     {
-        id:4,  name:'太空人的二三事',      coords:['H6','D5'],
-        desc:'小組介紹預留位置。', q:'題目預留位置？',
-        opts:['A. 選項一','B. 選項二','C. 選項三'], ans:'A'
+        id:4,  name:'羽眾不同',              coords:['C7','E5'],
+        desc:'羽毛球源自印度「普納」運動，1992 年才正式進入奧運殿堂！這組從 16 根羽毛的組成到球拍材質與場地規格，把羽球知識徹底解密。',
+        q:'羽毛球的「羽毛」是哪一種動物的羽毛？',
+        opts:['A. 雞','B. 鴨','C. 水鳥'], ans:'B'
     },
     {
-        id:5,  name:'有去無回的黑洞',      coords:['B8','H5'],
-        desc:'小組介紹預留位置。', q:'題目預留位置？',
-        opts:['A. 選項一','B. 選項二','C. 選項三'], ans:'A'
+        id:5,  name:'足球大解密',              coords:['D4','J6'],
+        desc:'從中國古代蹴鞠到 1930 年首屆世界盃，足球歷史超精彩！這組研究了球的重量、球衣設計與裁判規則，找出真正的運動精神。',
+        q:'比賽用的標準足球有多重？',
+        opts:['A. 310-350克','B. 410-450克','C. 510-550克'], ans:'B'
     },
     {
-        id:6,  name:'外星人與他們的產地',  coords:['G6','C4'],
-        desc:'小組介紹預留位置。', q:'題目預留位置？',
-        opts:['A. 選項一','B. 選項二','C. 選項三'], ans:'A'
+        id:6,  name:'體操館',              coords:['D6','K5'],
+        desc:'競技體操、韻律體操、彈翻床——這組一口氣研究了三大項目！從暖身科學到止滑粉與緊身衣，把一項運動從頭到腳徹底研究透徹。',
+        q:'下列何者不屬於競技體操的比賽項目？',
+        opts:['A. 跳馬','B. 彩帶操','C. 高低槓'], ans:'B'
     },
     {
-        id:7,  name:'星球生存組',          coords:['F7','E4'],
-        desc:'小組介紹預留位置。', q:'題目預留位置？',
-        opts:['A. 選項一','B. 選項二','C. 選項三'], ans:'A'
+        id:7,  name:'神「棋」寶貝',        coords:['G2','C5'],
+        desc:'下西洋棋算運動嗎？早在 1999 年，國際奧委會就給了答案：算！這組解密了盲棋規則、頂尖棋手與棋盤黑白配色的設計巧思，歡迎來挑戰一局！',
+        q:'「西洋棋」被什麼單位認可為運動項目？',
+        opts:['A. 國際奧林匹克委員會','B. 國際帕拉林匹克委員會','C. 國際世界運動會協會'], ans:'A'
     },
     {
-        id:8,  name:'星座神話組',          coords:['A9','J5'],
-        desc:'小組介紹預留位置。', q:'題目預留位置？',
-        opts:['A. 選項一','B. 選項二','C. 選項三'], ans:'A'
+        id:8,  name:'小小滑冰組',            coords:['B3','F1'],
+        desc:'搭上義大利米蘭冬奧熱潮，這組帶我們滑進冰上世界！從冰場溫控、洗冰車歷史到表演音樂規則的演變，全都查得清清楚楚。',
+        q:'2026年冬季奧林匹克運動會是在哪裡舉辦？',
+        opts:['A. 法國阿爾卑斯山','B. 中國北京','C. 義大利米蘭'], ans:'C'
     },
     {
-        id:9,  name:'神「棋」寶貝',        coords:['G2','C5'],
-        desc:'小組介紹預留位置。', q:'題目預留位置？',
-        opts:['A. 選項一','B. 選項二','C. 選項三'], ans:'A'
+        id:9,  name:'外星人與牠們的產地',  coords:['G6','C4'],
+        desc:'外星人長什麼樣子、住在哪裡？這組發揮無限想像力與邏輯推理，幫外星生物量身設計了最適合生存的奇妙環境，快來看看外星世界！',
+        q:'下列哪一個生物特徵主要幫助動物適應寒冷的環境？',
+        opts:['A. 北極熊厚厚的毛皮','B. 蜻蜓的翅膀','C. 鮪魚的鰭'], ans:'A'
     },
     {
-        id:10, name:'體操館',              coords:['D6','K5'],
-        desc:'小組介紹預留位置。', q:'題目預留位置？',
-        opts:['A. 選項一','B. 選項二','C. 選項三'], ans:'A'
+        id:10, name:'太空人的二三事',      coords:['H6','D5'],
+        desc:'在無重力的太空裡吃飯、喝水，一切都得重新設計！這組深入研究太空食物的特殊需求，揭開太空人日常生活的神奇秘密。',
+        q:'下列哪一項是太空食物的特色？',
+        opts:['A. 無碎屑且重量輕','B. 營養均衡且容易保存','C. 以上皆是'], ans:'C'
     },
     {
-        id:11, name:'小小滑冰',            coords:['B3','F1'],
-        desc:'小組介紹預留位置。', q:'題目預留位置？',
-        opts:['A. 選項一','B. 選項二','C. 選項三'], ans:'A'
+        id:11, name:'有去無回的黑洞',      coords:['B8','H5'],
+        desc:'宇宙最神秘的存在——連光都逃不掉的黑洞，究竟是怎麼形成的？這組從恆星的演化出發，帶你一步步走進「有去無回」的黑洞世界。',
+        q:'黑洞最有可能是由什麼天體演變而成？',
+        opts:['A. 恆星','B. 行星','C. 隕石'], ans:'A'
     },
     {
-        id:12, name:'羽球組',              coords:['C7','E5'],
-        desc:'小組介紹預留位置。', q:'題目預留位置？',
-        opts:['A. 選項一','B. 選項二','C. 選項三'], ans:'A'
+        id:12, name:'地球「圓」來如此',    coords:['F8','H3'],
+        desc:'地球是圓的大家都知道，但你知道是誰最先「證明」的嗎？這組梳理了地球形狀的各種假說，並親手製作地球模型，找出那個驚天大發現！',
+        q:'西元十六世紀，哪一支船隊完成環繞地球的航行，證實了「地圓說」？🌍',
+        opts:['A. 麥哲倫船隊','B. 麥當勞船隊','C. 麥香船隊'], ans:'A'
     },
     {
-        id:13, name:'足球組',              coords:['D4','J6'],
-        desc:'小組介紹預留位置。', q:'題目預留位置？',
-        opts:['A. 選項一','B. 選項二','C. 選項三'], ans:'A'
+        id:13, name:'繪夢日光：神話',      coords:['K6','F5'],
+        desc:'東方的后羿、西方的阿波羅，同一顆太陽各自演繹出截然不同的傳說！這組比較東西方太陽神話，更創作了屬於自己的太陽童話與限量周邊。',
+        q:'下列何者為東方神話故事？',
+        opts:['A. 后羿射日','B. 阿波羅駕太陽車','C. 伊卡洛斯飛向太陽'], ans:'A'
     },
     {
-        id:14, name:'鐵人三項組',          coords:['C3','G5'],
-        desc:'小組介紹預留位置。', q:'題目預留位置？',
-        opts:['A. 選項一','B. 選項二','C. 選項三'], ans:'A'
+        id:14, name:'飛向宇宙浩瀚無垠',   coords:['B2','G9'],
+        desc:'這組自己動手做氣球火箭，用反覆實驗找出飛行的核心原理。失敗不是終點，而是最棒的養分——作用力與反作用力的秘密，就在這裡！',
+        q:'火箭為什麼可以往上升空呢？🚀',
+        opts:['A. 磁力和吸引力','B. 作用力和反作用力','C. 摩擦力和彈力'], ans:'B'
     },
     {
-        id:15, name:'腳尖上的音樂',        coords:['C1','F6'],
-        desc:'小組介紹預留位置。', q:'題目預留位置？',
-        opts:['A. 選項一','B. 選項二','C. 選項三'], ans:'A'
+        id:15, name:'星球生存',          coords:['F7','E4'],
+        desc:'如果要離開地球搬家，太陽系八大行星哪顆最宜居？這組化身「星際房仲」，整理生存條件、逐一比對，用科學找出最佳答案！',
+        q:'以下選項中，符合「天王星不適合生存」的原因是哪一項？',
+        opts:['A. 有外星人','B. 地表溫度太高','C. 沒有液態水'], ans:'C'
     },
     {
-        id:16, name:'別"壺"鬧了啦！',     coords:['H4','A8'],
-        desc:'小組介紹預留位置。', q:'題目預留位置？',
-        opts:['A. 選項一','B. 選項二','C. 選項三'], ans:'A'
+        id:16, name:'星座神話',          coords:['A9','J5'],
+        desc:'你是什麼星座？這組從自己的星座出發，深挖神話故事與天文知識，拼湊出一份橫跨十二星座的「星空大報告」，帶你看見宇宙的浪漫！',
+        q:'在最一開始劃分時，黃道十二宮的春分點在哪個星座上？',
+        opts:['A. 牡羊座','B. 天蠍座','C. 雙子座'], ans:'A'
     }
 ];
 
@@ -572,7 +627,8 @@ function showScreen(id) {
             document.getElementById('coord-hint').style.display = 'flex';
         }
     }
-    if (id === 'screen-home') updateProgress();
+    if (id === 'screen-home')     updateProgress();
+    if (id === 'screen-progress') buildProgressScreen();
 }
 
 // ══════════════════════════════════════════════
@@ -580,8 +636,9 @@ function showScreen(id) {
 // ══════════════════════════════════════════════
 function startScanner() {
     if (qrScanner) { qrScanner.stop().catch(function(){}); qrScanner = null; }
-    buildDemoButtons();
     showScreen('screen-scanner');
+    document.getElementById('scanner-error').style.display = 'none';
+    document.getElementById('manual-id-input').value = '';
     qrScanner = new Html5Qrcode('qr-reader');
     qrScanner.start(
         { facingMode: 'environment' },
@@ -590,7 +647,12 @@ function startScanner() {
             var id = parseInt(text);
             if (isNaN(id)) {
                 try {
-                    id = parseInt(new URL(text).searchParams.get('g'));
+                    var m = text.match(/PBL(\d+)$/i);
+                    if (m) {
+                        id = parseInt(m[1]);
+                    } else {
+                        id = parseInt(new URL(text).searchParams.get('g'));
+                    }
                 } catch(e) {}
             }
             if (id >= 1 && id <= 16) {
@@ -599,8 +661,10 @@ function startScanner() {
             }
         },
         function() {}
-    ).catch(function() {});
-};
+    ).catch(function() {
+        document.getElementById('scanner-error').style.display = 'block';
+    });
+}
 
 document.getElementById('btn-stop-scan').onclick = function() {
     stopScanner();
@@ -614,22 +678,40 @@ function stopScanner() {
     showScreen('screen-home');
 }
 
+function manualLoadGroup() {
+    var val = parseInt(document.getElementById('manual-id-input').value);
+    if (val >= 1 && val <= 16) {
+        stopScanner();
+        loadGroup(val);
+    }
+}
+
 // ══════════════════════════════════════════════
 // 載入小組
 // ══════════════════════════════════════════════
 function loadGroup(id) {
     currentGroup = GROUPS.find(function(g) { return g.id === id; });
     if (!currentGroup) return;
+
+    // 已完成的組：直接跳回恭喜頁，不用重新答題
+    if (completedGroups.has(id)) {
+        var coordText = currentGroup.coords.map(function(c) {
+            return '(' + c.charAt(0) + ', ' + c.slice(1) + ')';
+        }).join('  ');
+        lastCoords = coordText;
+        document.getElementById('congrats-coord').textContent = coordText;
+        document.getElementById('congrats-done').textContent =
+            '已完成 ' + completedGroups.size + ' / ' + GROUPS.length + ' 組';
+        showScreen('screen-congrats');
+        return;
+    }
+
     document.getElementById('gp-nav-title').textContent = currentGroup.name;
     document.getElementById('gp-name').textContent      = currentGroup.name;
     document.getElementById('gp-desc').textContent      = currentGroup.desc;
-    showScreen('screen-group');
-}
-
-document.getElementById('btn-start-q').onclick = function() {
-    if (!currentGroup) return;
-    document.getElementById('q-text').textContent = currentGroup.q;
-    var optEl = document.getElementById('q-options');
+    document.getElementById('gp-q-text').textContent    = currentGroup.q;
+    document.getElementById('gp-feedback').textContent  = '';
+    var optEl = document.getElementById('gp-options');
     optEl.innerHTML = '';
     currentGroup.opts.forEach(function(opt) {
         var btn = document.createElement('button');
@@ -639,8 +721,8 @@ document.getElementById('btn-start-q').onclick = function() {
         btn.onclick = function() { checkAnswer(key); };
         optEl.appendChild(btn);
     });
-    showScreen('screen-question');
-};
+    showScreen('screen-group');
+}
 
 // ══════════════════════════════════════════════
 // 答題
@@ -659,6 +741,8 @@ function checkAnswer(selected) {
         playSuccessSound();
         completedGroups.add(currentGroup.id);
         localStorage.setItem(STORAGE_COMPLETED, JSON.stringify(Array.from(completedGroups)));
+        document.getElementById('congrats-done').textContent =
+            '已完成 ' + completedGroups.size + ' / ' + GROUPS.length + ' 組';
         var coordText = currentGroup.coords.map(function(c) {
             return '(' + c.charAt(0) + ', ' + c.slice(1) + ')';
         }).join('  ');
@@ -666,11 +750,13 @@ function checkAnswer(selected) {
         document.getElementById('congrats-coord').textContent = coordText;
         setTimeout(function() { showScreen('screen-congrats'); }, 600);
     } else {
+        var fb = document.getElementById('gp-feedback');
+        if (fb) fb.textContent = '答錯了，再試一次！';
         setTimeout(function() {
             allBtns.forEach(function(b) {
                 b.classList.remove('wrong','correct');
             });
-            // 重新綁定點擊
+            if (fb) fb.textContent = '';
             allBtns.forEach(function(b) {
                 var key = b.querySelector('.opt-key').textContent;
                 b.onclick = function() { checkAnswer(key); };
@@ -752,11 +838,20 @@ function paint(cell) {
     if (dragAction === 'fill') {
         cell.classList.add('filled');
         filledCells.add(k);
+        checkGridComplete();
     } else {
         cell.classList.remove('filled');
         filledCells.delete(k);
     }
     localStorage.setItem(STORAGE_KEY, JSON.stringify(Array.from(filledCells)));
+}
+
+function checkGridComplete() {
+    if (document.getElementById('modal-complete').classList.contains('show')) return;
+    var allFilled = GROUPS.every(function(g) {
+        return g.coords.every(function(c) { return filledCells.has(c); });
+    });
+    if (allFilled) openCompleteModal();
 }
 
 function resizeGrid() {
@@ -771,13 +866,6 @@ function resizeGrid() {
     var cellSz = Math.max(22, Math.min(cW, cH, 52));
     document.documentElement.style.setProperty('--cell-sz', cellSz + 'px');
     document.documentElement.style.setProperty('--label-sz', labelSz + 'px');
-}
-
-function saveGrid() {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(Array.from(filledCells)));
-    var toast = document.getElementById('toast');
-    toast.classList.add('show');
-    setTimeout(function() { toast.classList.remove('show'); }, 1800);
 }
 
 function loadGrid() {
@@ -818,27 +906,93 @@ function updateProgress() {
 }
 
 // ══════════════════════════════════════════════
-// 測試按鈕
+// 打卡進度頁
 // ══════════════════════════════════════════════
-function buildDemoButtons() {
-    var dg = document.getElementById('demo-grid');
-    dg.innerHTML = '';
+function buildProgressScreen() {
+    var body = document.getElementById('prog-body');
+    body.innerHTML = '';
+    var n = completedGroups.size, total = GROUPS.length;
+
+    var sum = document.createElement('div');
+    sum.className = 'prog-summary';
+    sum.innerHTML = '<div class="prog-summary-count">' + n + ' / ' + total + '</div>' +
+                    '<div class="prog-summary-label">組已打卡完成</div>';
+    body.appendChild(sum);
+
+    var wrap = document.createElement('div');
+    wrap.className = 'progress-bar-wrap';
+    var fill = document.createElement('div');
+    fill.className = 'progress-bar-fill';
+    fill.style.width = Math.round(n / total * 100) + '%';
+    wrap.appendChild(fill);
+    body.appendChild(wrap);
+
+    if (n === total) {
+        var allDoneBtn = document.createElement('button');
+        allDoneBtn.className = 'btn btn-green';
+        allDoneBtn.textContent = '全部完成！點我查看如何領取禮物';
+        allDoneBtn.onclick = openCompleteModal;
+        body.appendChild(allDoneBtn);
+    }
+
+    var grid = document.createElement('div');
+    grid.className = 'prog-grid';
+
     GROUPS.forEach(function(g) {
-        var btn  = document.createElement('button');
         var done = completedGroups.has(g.id);
-        btn.className = 'demo-btn' + (done ? ' done' : '');
-        btn.textContent = (done ? '✓ ' : '') + '第' + g.id + '組';
-        btn.onclick = function() {
-            if (qrScanner) { qrScanner.stop().catch(function(){}); qrScanner = null; }
-            loadGroup(g.id);
-        };
-        dg.appendChild(btn);
+        var item = document.createElement('div');
+        item.className = 'prog-item ' + (done ? 'done' : 'todo');
+
+        var icon = document.createElement('div');
+        icon.className = 'prog-icon ' + (done ? 'done' : 'todo');
+        icon.textContent = done ? '✓' : g.id;
+
+        var name = document.createElement('div');
+        name.className = 'prog-name';
+        name.textContent = g.name;
+
+        item.appendChild(icon);
+        item.appendChild(name);
+
+        grid.appendChild(item);
     });
+
+    body.appendChild(grid);
 }
 
 // ══════════════════════════════════════════════
 // 啟動
 // ══════════════════════════════════════════════
+function resetAll() {
+    if (!confirm('確定要重置所有進度嗎？')) return;
+    localStorage.removeItem(STORAGE_COMPLETED);
+    localStorage.removeItem(STORAGE_KEY);
+    localStorage.removeItem('pbl_no_intro');
+    completedGroups = new Set();
+    filledCells = new Set();
+    buildGrid();
+    updateProgress();
+}
+
+function testComplete() {
+    GROUPS.forEach(function(g) {
+        completedGroups.add(g.id);
+        g.coords.forEach(function(c) { filledCells.add(c); });
+    });
+    localStorage.setItem(STORAGE_COMPLETED, JSON.stringify(Array.from(completedGroups)));
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(Array.from(filledCells)));
+    buildGrid();
+    updateProgress();
+    openCompleteModal();
+}
+
+function openCompleteModal() {
+    document.getElementById('modal-complete').classList.add('show');
+}
+function closeCompleteModal() {
+    document.getElementById('modal-complete').classList.remove('show');
+}
+
 function openModal() {
     document.getElementById('modal-help').classList.add('show');
 }
@@ -853,6 +1007,9 @@ function neverShowModal() {
 document.getElementById('modal-help').addEventListener('click', function(e) {
     if (e.target === this) closeModal();
 });
+document.getElementById('modal-complete').addEventListener('click', function(e) {
+    if (e.target === this) closeCompleteModal();
+});
 
 // 讀取已完成紀錄
 (function() {
@@ -862,13 +1019,22 @@ document.getElementById('modal-help').addEventListener('click', function(e) {
 
 loadGrid();
 buildGrid();
-buildDemoButtons();
 updateProgress();
 window.addEventListener('resize', resizeGrid);
 
-// 從 URL 參數直接開啟指定組別（?g=N）
+// 從 URL 參數直接開啟指定組別（?g=N）或重置（?reset=1）
 (function() {
-    var gParam = parseInt(new URLSearchParams(window.location.search).get('g'));
+    var params = new URLSearchParams(window.location.search);
+    if (params.get('reset') === '1') {
+        localStorage.removeItem(STORAGE_COMPLETED);
+        localStorage.removeItem(STORAGE_KEY);
+        localStorage.removeItem('pbl_no_intro');
+        completedGroups = new Set();
+        filledCells = new Set();
+        buildGrid();
+        updateProgress();
+    }
+    var gParam = parseInt(params.get('g'));
     if (gParam >= 1 && gParam <= 16) {
         loadGroup(gParam);
     }
