@@ -355,7 +355,7 @@
         <button class="btn btn-light" onclick="showScreen('screen-grid')">座標地圖</button>
         <button class="btn btn-light" onclick="showScreen('screen-progress')">打卡進度</button>
     </div>
-    <button onclick="resetAll()" style="margin-top:8px;background:none;border:none;font-size:0.8rem;color:#bbb;cursor:pointer;padding:6px;">重置所有進度</button>
+    <button onclick="resetAll()" style="margin-top:8px;background:none;border:none;font-size:0.8rem;color:#bbb;cursor:pointer;padding:6px;">【測試】重置所有進度</button>
     <button onclick="testComplete()" style="background:none;border:none;font-size:0.8rem;color:#bbb;cursor:pointer;padding:6px;">【測試】全部完成</button>
     <div style="margin-top:auto;padding-top:24px;font-size:0.72rem;color:#ccc;letter-spacing:0.05em;">© ART &amp; NUMERACY ACADEMY</div>
 </div>
@@ -642,11 +642,13 @@ function showScreen(id) {
         document.getElementById('congrats-illust').src = getGroupIllust(currentGroup.id);
     }
     if (id === 'screen-grid') {
-        resizeGrid();
-        if (lastCoords) {
-            document.getElementById('coord-hint-text').textContent = '標記你的座標：' + lastCoords;
-            document.getElementById('coord-hint').style.display = 'flex';
-        }
+        requestAnimationFrame(function() {
+            resizeGrid();
+            if (lastCoords) {
+                document.getElementById('coord-hint-text').textContent = '標記你的座標：' + lastCoords;
+                document.getElementById('coord-hint').style.display = 'flex';
+            }
+        });
     }
     if (id === 'screen-home')     updateProgress();
     if (id === 'screen-progress') buildProgressScreen();
@@ -824,40 +826,12 @@ function buildGrid() {
         wrap.appendChild(lbl);
     });
 
-    // 滑鼠事件
-    wrap.addEventListener('mousedown', function(e) {
-        var cell = e.target.closest('.gc');
-        if (cell) {
-            isPainting = true;
-            dragAction = filledCells.has(cell.dataset.k) ? 'erase' : 'fill';
-            paint(cell);
-        }
-    });
-    wrap.addEventListener('mousemove', function(e) {
-        if (isPainting) { var cell = e.target.closest('.gc'); if(cell) paint(cell); }
-    });
-    document.addEventListener('mouseup', function() { isPainting = false; dragAction = null; });
-
-    // 觸控事件（手機）
-    wrap.addEventListener('touchstart', function(e) {
-        e.preventDefault();
-        var el = document.elementFromPoint(e.touches[0].clientX, e.touches[0].clientY);
-        if (el && el.classList.contains('gc')) {
-            isPainting = true;
-            dragAction = filledCells.has(el.dataset.k) ? 'erase' : 'fill';
-            paint(el);
-        }
-    }, { passive: false });
-    wrap.addEventListener('touchmove', function(e) {
-        e.preventDefault();
-        if (isPainting) paintAtTouch(e.touches[0]);
-    }, { passive: false });
-    wrap.addEventListener('touchend', function() { isPainting = false; dragAction = null; });
 }
 
 function paintAtTouch(touch) {
     var el = document.elementFromPoint(touch.clientX, touch.clientY);
-    if (el && el.classList.contains('gc')) paint(el);
+    var cell = el && el.closest('.gc');
+    if (cell) paint(cell);
 }
 
 function paint(cell) {
@@ -1008,6 +982,8 @@ function resetAll() {
     localStorage.removeItem('pbl_no_intro');
     completedGroups = new Set();
     filledCells = new Set();
+    lastCoords = '';
+    document.getElementById('coord-hint').style.display = 'none';
     buildGrid();
     updateProgress();
 }
@@ -1059,6 +1035,38 @@ loadGrid();
 buildGrid();
 updateProgress();
 window.addEventListener('resize', resizeGrid);
+
+// 格子事件只初始化一次，避免 buildGrid 重複呼叫時疊加
+(function() {
+    var wrap = document.getElementById('grid-wrap');
+    wrap.addEventListener('mousedown', function(e) {
+        var cell = e.target.closest('.gc');
+        if (cell) {
+            isPainting = true;
+            dragAction = filledCells.has(cell.dataset.k) ? 'erase' : 'fill';
+            paint(cell);
+        }
+    });
+    wrap.addEventListener('mousemove', function(e) {
+        if (isPainting) { var cell = e.target.closest('.gc'); if (cell) paint(cell); }
+    });
+    document.addEventListener('mouseup', function() { isPainting = false; dragAction = null; });
+    wrap.addEventListener('touchstart', function(e) {
+        e.preventDefault();
+        var el = document.elementFromPoint(e.touches[0].clientX, e.touches[0].clientY);
+        var cell = el && el.closest('.gc');
+        if (cell) {
+            isPainting = true;
+            dragAction = filledCells.has(cell.dataset.k) ? 'erase' : 'fill';
+            paint(cell);
+        }
+    }, { passive: false });
+    wrap.addEventListener('touchmove', function(e) {
+        e.preventDefault();
+        if (isPainting) paintAtTouch(e.touches[0]);
+    }, { passive: false });
+    wrap.addEventListener('touchend', function() { isPainting = false; dragAction = null; });
+})();
 
 // 從 URL 參數直接開啟指定組別（?g=N）或重置（?reset=1）
 (function() {
