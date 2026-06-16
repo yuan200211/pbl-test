@@ -23,11 +23,12 @@
         body {
             font-family: -apple-system, BlinkMacSystemFont, 'Helvetica Neue', Arial, sans-serif;
             background: #3d4fa0;
-            min-height: 100vh;
+            height: 100vh;
+            overflow: hidden;
         }
 
         /* ── 畫面系統 ── */
-        .screen { display: none; flex-direction: column; min-height: 100vh; }
+        .screen { display: none; flex-direction: column; height: 100vh; overflow: hidden; }
         .screen.active { display: flex; }
 
         /* ── 通用按鈕 ── */
@@ -189,7 +190,7 @@
         .congrats-btns { display: flex; flex-direction: column; gap: 12px; width: 100%; max-width: 320px; }
 
         /* ── 座標格子頁 ── */
-        #screen-grid { background: var(--lblue); height: 100vh; overflow: hidden; }
+        #screen-grid { background: var(--lblue); }
         .toolbar {
             display: flex; gap: 8px; padding: 10px 16px;
             background: white; border-bottom: 2px solid var(--lblue);
@@ -336,7 +337,7 @@
     </style>
 </head>
 <body>
-<img src="網站背景.png" aria-hidden="true" style="position:fixed;inset:0;width:100%;height:100%;object-fit:cover;z-index:-1;pointer-events:none;">
+<img src="bg.png" aria-hidden="true" style="position:fixed;inset:0;width:100%;height:100%;object-fit:cover;z-index:-1;pointer-events:none;">
 
 <!-- ════════════════════ 主頁 ════════════════════ -->
 <div id="screen-home" class="screen active">
@@ -397,7 +398,7 @@
     <div class="modal-box">
         <button class="modal-close" onclick="closeCompleteModal()">✕</button>
         <div class="modal-title" style="text-align:center;font-size:1.8rem;">任務完成！</div>
-        <img src="網站插圖-03.png" aria-hidden="true" style="width:110px;display:block;margin:12px auto 0;">
+        <img src="illust-03.png" aria-hidden="true" style="width:110px;display:block;margin:12px auto 0;">
         <div class="modal-lead" style="text-align:center;margin-top:12px;">
             記得前往<strong>櫃檯</strong>領取<strong>小禮物</strong>和<strong>餐盒</strong>！
         </div>
@@ -452,7 +453,7 @@
         <div class="nav-spacer"></div>
     </div>
     <div class="congrats-body">
-        <img src="網站插圖-02.png" aria-hidden="true" style="width:140px;pointer-events:none;">
+        <img id="congrats-illust" src="illust-01.png" aria-hidden="true" style="width:140px;pointer-events:none;">
         <div class="congrats-title">恭喜你答對了！</div>
         <div class="congrats-done" id="congrats-done"></div>
         <div class="coord-box">
@@ -474,9 +475,7 @@
         <div class="nav-title">打卡進度</div>
         <div class="nav-spacer"></div>
     </div>
-    <div style="display:flex;justify-content:center;padding:10px 0 0;">
-        <img src="網站插圖-06.png" aria-hidden="true" style="width:72px;opacity:0.85;pointer-events:none;">
-    </div>
+
     <div class="progress-body" id="prog-body"></div>
 </div>
 
@@ -625,11 +624,21 @@ var STORAGE_KEY = 'pbl_grid_v2';
 // ══════════════════════════════════════════════
 // 畫面切換
 // ══════════════════════════════════════════════
+function getGroupIllust(id) {
+    if (id <= 4)  return 'illust-01.png';
+    if (id <= 8)  return 'illust-07.png';
+    if (id <= 12) return 'illust-09.png';
+    return 'illust-10.png';
+}
+
 function showScreen(id) {
     document.querySelectorAll('.screen').forEach(function(s) {
         s.classList.remove('active');
     });
     document.getElementById(id).classList.add('active');
+    if (id === 'screen-congrats' && currentGroup) {
+        document.getElementById('congrats-illust').src = getGroupIllust(currentGroup.id);
+    }
     if (id === 'screen-grid') {
         resizeGrid();
         if (lastCoords) {
