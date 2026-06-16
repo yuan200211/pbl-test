@@ -74,14 +74,15 @@
 
         /* ── 掃描頁 ── */
         .scanner-body {
-            flex: 1; display: flex; flex-direction: column;
+            flex: 1; min-height: 0; display: flex; flex-direction: column;
             align-items: center; padding: 20px 16px; gap: 18px;
+            overflow-y: auto;
         }
         .scanner-hint { font-size: 0.9rem; color: rgba(219,240,252,0.9); text-align: center; }
         #qr-reader { width: 100%; max-width: 340px; border-radius: 12px; overflow: hidden; }
         /* ── 打卡進度頁 ── */
         .progress-body {
-            flex: 1; padding: 16px 20px; overflow-y: auto;
+            flex: 1; min-height: 0; padding: 16px 20px; overflow-y: auto;
             display: flex; flex-direction: column; gap: 10px;
             max-width: 500px; margin: 0 auto; width: 100%;
         }
@@ -124,7 +125,7 @@
 
         /* ── 小組介紹頁 ── */
         .group-body {
-            flex: 1; padding: 24px 20px;
+            flex: 1; min-height: 0; padding: 24px 20px;
             display: flex; flex-direction: column;
             gap: 18px; max-width: 500px; margin: 0 auto; width: 100%;
             overflow-y: auto;
@@ -166,10 +167,10 @@
 
         /* ── 恭喜頁 ── */
         .congrats-body {
-            flex: 1; display: flex; flex-direction: column;
+            flex: 1; min-height: 0; display: flex; flex-direction: column;
             align-items: center; justify-content: center;
-            padding: 40px 24px; gap: 22px; text-align: center;
-            background: white;
+            padding: 24px; gap: 16px; text-align: center;
+            background: white; overflow-y: auto;
         }
         .congrats-title { font-size: 2.8rem; font-weight: 800; color: var(--dblue); }
         .coord-box {
