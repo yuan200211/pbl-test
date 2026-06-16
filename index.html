@@ -24,11 +24,12 @@
             font-family: -apple-system, BlinkMacSystemFont, 'Helvetica Neue', Arial, sans-serif;
             background: #3d4fa0;
             height: 100vh;
+            height: 100dvh;
             overflow: hidden;
         }
 
         /* ── 畫面系統 ── */
-        .screen { display: none; flex-direction: column; height: 100vh; overflow: hidden; }
+        .screen { display: none; flex-direction: column; height: 100vh; height: 100dvh; overflow: hidden; }
         .screen.active { display: flex; }
 
         /* ── 通用按鈕 ── */
@@ -82,7 +83,7 @@
         #qr-reader { width: 100%; max-width: 340px; border-radius: 12px; overflow: hidden; }
         /* ── 打卡進度頁 ── */
         .progress-body {
-            flex: 1; min-height: 0; padding: 16px 20px; overflow-y: auto;
+            flex: 1; min-height: 0; padding: 16px 20px max(16px, env(safe-area-inset-bottom)); overflow-y: auto;
             display: flex; flex-direction: column; gap: 10px;
             max-width: 500px; margin: 0 auto; width: 100%;
         }
@@ -169,7 +170,7 @@
         .congrats-body {
             flex: 1; min-height: 0; display: flex; flex-direction: column;
             align-items: center; justify-content: center;
-            padding: 24px; gap: 16px; text-align: center;
+            padding: 24px 24px max(24px, env(safe-area-inset-bottom)); gap: 16px; text-align: center;
             background: white; overflow-y: auto;
         }
         .congrats-title { font-size: 2.8rem; font-weight: 800; color: var(--dblue); }
@@ -209,7 +210,7 @@
             flex: 1;
             display: flex; align-items: center; justify-content: center;
             overflow: hidden;
-            padding: 8px;
+            padding: 8px 8px max(8px, env(safe-area-inset-bottom));
         }
         .grid-wrap {
             display: grid;
@@ -884,12 +885,12 @@ function resizeGrid() {
     var area = document.getElementById('grid-area');
     if (!area) return;
     var aW = area.clientWidth - 16;
-    var aH = area.clientHeight - 16;
+    var aH = area.clientHeight - 56;
     var labelSz = 22;
     var gap = 3;
     var cW = Math.floor((aW - labelSz - gap * COLS.length) / COLS.length);
     var cH = Math.floor((aH - labelSz - gap * (ROWS.length + 1)) / ROWS.length);
-    var cellSz = Math.max(22, Math.min(cW, cH, 52));
+    var cellSz = Math.max(22, Math.min(cW, cH, 46));
     document.documentElement.style.setProperty('--cell-sz', cellSz + 'px');
     document.documentElement.style.setProperty('--label-sz', labelSz + 'px');
 }
