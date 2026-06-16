@@ -22,7 +22,7 @@
 
         body {
             font-family: -apple-system, BlinkMacSystemFont, 'Helvetica Neue', Arial, sans-serif;
-            background: var(--lblue);
+            background: #3d4fa0;
             min-height: 100vh;
         }
 
@@ -66,10 +66,9 @@
         #screen-home {
             align-items: center; justify-content: center;
             padding: 48px 28px; gap: 12px; text-align: center;
-            background: white;
         }
-        .home-title    { font-size: 2rem; font-weight: 800; color: var(--dblue); }
-        .home-subtitle { font-size: 0.95rem; color: var(--purple); margin-bottom: 16px; }
+        .home-title    { font-size: 2rem; font-weight: 800; color: white; }
+        .home-subtitle { font-size: 0.95rem; color: rgba(219,240,252,0.9); margin-bottom: 16px; }
         .home-buttons  { display: flex; flex-direction: column; gap: 14px; width: 100%; max-width: 340px; }
 
         /* ── 掃描頁 ── */
@@ -77,7 +76,7 @@
             flex: 1; display: flex; flex-direction: column;
             align-items: center; padding: 20px 16px; gap: 18px;
         }
-        .scanner-hint { font-size: 0.9rem; color: var(--purple); text-align: center; }
+        .scanner-hint { font-size: 0.9rem; color: rgba(219,240,252,0.9); text-align: center; }
         #qr-reader { width: 100%; max-width: 340px; border-radius: 12px; overflow: hidden; }
         /* ── 打卡進度頁 ── */
         .progress-body {
@@ -129,18 +128,19 @@
             gap: 18px; max-width: 500px; margin: 0 auto; width: 100%;
             overflow-y: auto;
         }
+        #screen-group { background: var(--lblue); }
         .group-name { font-size: 1.6rem; font-weight: 800; color: var(--dblue); }
-        .group-desc { font-size: 1rem; color: var(--dark); line-height: 1.75; }
+        .group-desc { font-size: 1rem; color: #333; line-height: 1.75; }
 
-        .question-text { font-size: 1.2rem; font-weight: 700; color: var(--dblue); line-height: 1.5; }
+        .question-text { font-size: 1.2rem; font-weight: 700; color: var(--purple); line-height: 1.5; }
         .options { display: flex; flex-direction: column; gap: 12px; }
         .opt-btn {
             padding: 16px 20px;
-            background: white; border: 2px solid var(--lblue);
+            background: white; border: 2px solid var(--blue);
             border-radius: 12px; font-size: 1rem;
             text-align: left; cursor: pointer; color: var(--dark);
         }
-        .opt-btn:active { background: var(--lblue); }
+        .opt-btn:active { background: #c8e8f6; }
         .opt-btn.correct { border-color: var(--green); background: #f3faec; }
         .opt-btn.wrong   { border-color: var(--pink);  background: #fdf0ee; }
         .opt-key { font-weight: 800; margin-right: 10px; color: var(--dblue); }
@@ -149,7 +149,7 @@
         .q-section-label {
             font-size: 0.75rem; font-weight: 700; color: var(--purple);
             letter-spacing: 0.08em;
-            padding-top: 14px; border-top: 1.5px solid var(--lblue);
+            padding-top: 14px; border-top: 1.5px solid var(--blue);
         }
         .q-feedback {
             font-size: 0.92rem; font-weight: 600;
@@ -171,7 +171,6 @@
             background: white;
         }
         .congrats-title { font-size: 2.8rem; font-weight: 800; color: var(--dblue); }
-        .congrats-sub   { font-size: 1rem; color: var(--purple); }
         .coord-box {
             background: var(--dblue); color: white;
             border-radius: 16px; padding: 24px 48px;
@@ -190,7 +189,7 @@
         .congrats-btns { display: flex; flex-direction: column; gap: 12px; width: 100%; max-width: 320px; }
 
         /* ── 座標格子頁 ── */
-        #screen-grid { background: var(--lblue); }
+        #screen-grid { background: var(--lblue); height: 100vh; overflow: hidden; }
         .toolbar {
             display: flex; gap: 8px; padding: 10px 16px;
             background: white; border-bottom: 2px solid var(--lblue);
@@ -233,12 +232,19 @@
 
         /* ── 座標提示條 ── */
         .coord-hint {
-            display: flex; align-items: center; justify-content: space-between;
+            display: flex; align-items: center;
             background: var(--pink); color: var(--dark);
             padding: 10px 16px; gap: 10px;
             font-size: 0.88rem; font-weight: 600;
         }
+        .coord-hint::before {
+            content: ''; width: 28px; flex-shrink: 0;
+        }
+        #coord-hint-text {
+            flex: 1; text-align: center;
+        }
         .coord-hint-close {
+            width: 28px; flex-shrink: 0;
             background: none; border: none; color: var(--dark);
             font-size: 1rem; cursor: pointer; padding: 0 4px; opacity: 0.8;
         }
@@ -305,11 +311,11 @@
             display: flex; flex-direction: column; gap: 6px;
         }
         .progress-label {
-            font-size: 0.88rem; color: var(--purple); text-align: center;
+            font-size: 0.88rem; color: rgba(255,255,255,0.85); text-align: center;
         }
-        .progress-label span { font-weight: 800; color: var(--dblue); }
+        .progress-label span { font-weight: 800; color: white; }
         .progress-bar-wrap {
-            height: 8px; background: var(--lblue); border-radius: 99px; overflow: hidden;
+            height: 8px; background: rgba(255,255,255,0.25); border-radius: 99px; overflow: hidden;
         }
         .progress-bar-fill {
             height: 100%; background: var(--green); border-radius: 99px;
@@ -330,6 +336,7 @@
     </style>
 </head>
 <body>
+<img src="圖片/網站背景.png" aria-hidden="true" style="position:fixed;inset:0;width:100%;height:100%;object-fit:cover;z-index:-1;pointer-events:none;">
 
 <!-- ════════════════════ 主頁 ════════════════════ -->
 <div id="screen-home" class="screen active">
@@ -389,10 +396,10 @@
 <div class="modal-overlay" id="modal-complete">
     <div class="modal-box">
         <button class="modal-close" onclick="closeCompleteModal()">✕</button>
-        <div class="modal-title" style="text-align:center;font-size:1.8rem;">全部完成！</div>
+        <div class="modal-title" style="text-align:center;font-size:1.8rem;">任務完成！</div>
+        <img src="圖片/網站插圖-03.png" aria-hidden="true" style="width:110px;display:block;margin:12px auto 0;">
         <div class="modal-lead" style="text-align:center;margin-top:12px;">
-            恭喜你完成全部 16 組的任務！<br><br>
-            記得前往<strong>櫃檯</strong>領取<strong>小禮物</strong>和<strong>餐盒</strong>喔！
+            記得前往<strong>櫃檯</strong>領取<strong>小禮物</strong>和<strong>餐盒</strong>！
         </div>
         <button class="modal-cta" onclick="closeCompleteModal()">好的，馬上去！</button>
     </div>
@@ -445,8 +452,8 @@
         <div class="nav-spacer"></div>
     </div>
     <div class="congrats-body">
-        <div class="congrats-title">恭喜你！</div>
-        <div class="congrats-sub">你完成了本次任務</div>
+        <img src="圖片/網站插圖-02.png" aria-hidden="true" style="width:140px;pointer-events:none;">
+        <div class="congrats-title">恭喜你答對了！</div>
         <div class="congrats-done" id="congrats-done"></div>
         <div class="coord-box">
             <div class="coord-box-label">你的座標</div>
@@ -466,6 +473,9 @@
         <button class="nav-back" onclick="showScreen('screen-home')">← 返回</button>
         <div class="nav-title">打卡進度</div>
         <div class="nav-spacer"></div>
+    </div>
+    <div style="display:flex;justify-content:center;padding:10px 0 0;">
+        <img src="圖片/網站插圖-06.png" aria-hidden="true" style="width:72px;opacity:0.85;pointer-events:none;">
     </div>
     <div class="progress-body" id="prog-body"></div>
 </div>
@@ -680,9 +690,14 @@ function stopScanner() {
 
 function manualLoadGroup() {
     var val = parseInt(document.getElementById('manual-id-input').value);
-    if (val >= 1 && val <= 16) {
-        stopScanner();
-        loadGroup(val);
+    if (isNaN(val) || val < 1 || val > 16) return;
+    var go = function() { loadGroup(val); };
+    if (qrScanner) {
+        var s = qrScanner;
+        qrScanner = null;
+        s.stop().then(go).catch(go);
+    } else {
+        go();
     }
 }
 
@@ -750,6 +765,7 @@ function checkAnswer(selected) {
         document.getElementById('congrats-coord').textContent = coordText;
         setTimeout(function() { showScreen('screen-congrats'); }, 600);
     } else {
+        playErrorSound();
         var fb = document.getElementById('gp-feedback');
         if (fb) fb.textContent = '答錯了，再試一次！';
         setTimeout(function() {
@@ -895,6 +911,25 @@ function playSuccessSound() {
     } catch(e) {}
 }
 
+function playErrorSound() {
+    try {
+        var ctx = new (window.AudioContext || window.webkitAudioContext)();
+        [311, 233].forEach(function(freq, i) {
+            var osc  = ctx.createOscillator();
+            var gain = ctx.createGain();
+            osc.connect(gain);
+            gain.connect(ctx.destination);
+            osc.type = 'sine';
+            osc.frequency.value = freq;
+            var t = ctx.currentTime + i * 0.2;
+            gain.gain.setValueAtTime(0.2, t);
+            gain.gain.exponentialRampToValueAtTime(0.001, t + 0.32);
+            osc.start(t);
+            osc.stop(t + 0.32);
+        });
+    } catch(e) {}
+}
+
 // ══════════════════════════════════════════════
 // 進度
 // ══════════════════════════════════════════════
@@ -919,18 +954,10 @@ function buildProgressScreen() {
                     '<div class="prog-summary-label">組已打卡完成</div>';
     body.appendChild(sum);
 
-    var wrap = document.createElement('div');
-    wrap.className = 'progress-bar-wrap';
-    var fill = document.createElement('div');
-    fill.className = 'progress-bar-fill';
-    fill.style.width = Math.round(n / total * 100) + '%';
-    wrap.appendChild(fill);
-    body.appendChild(wrap);
-
     if (n === total) {
         var allDoneBtn = document.createElement('button');
         allDoneBtn.className = 'btn btn-green';
-        allDoneBtn.textContent = '全部完成！點我查看如何領取禮物';
+        allDoneBtn.textContent = '任務完成！點我查看如何領取禮物';
         allDoneBtn.onclick = openCompleteModal;
         body.appendChild(allDoneBtn);
     }
