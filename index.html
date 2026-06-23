@@ -355,9 +355,7 @@
         <button class="btn btn-light" onclick="showScreen('screen-grid')">座標地圖</button>
         <button class="btn btn-light" onclick="showScreen('screen-progress')">打卡進度</button>
     </div>
-    <button onclick="resetAll()" style="margin-top:8px;background:none;border:none;font-size:0.8rem;color:#bbb;cursor:pointer;padding:6px;">【測試】重置所有進度</button>
-    <button onclick="testComplete()" style="background:none;border:none;font-size:0.8rem;color:#bbb;cursor:pointer;padding:6px;">【測試】全部完成</button>
-    <div style="margin-top:auto;padding-top:24px;font-size:0.72rem;color:#ccc;letter-spacing:0.05em;">© ART &amp; NUMERACY ACADEMY</div>
+<div style="margin-top:auto;padding-top:24px;font-size:0.72rem;color:#ccc;letter-spacing:0.05em;">© ART &amp; NUMERACY ACADEMY</div>
 </div>
 
 <!-- ════════════════════ 說明彈窗 ════════════════════ -->
@@ -373,7 +371,6 @@
         </div>
 
         <div class="modal-section">
-            <div class="modal-section-title">怎麼玩</div>
             <div class="step-list">
                 <div class="step">
                     <div class="step-num">1</div>
@@ -381,7 +378,7 @@
                 </div>
                 <div class="step">
                     <div class="step-num">2</div>
-                    <div class="step-text"><strong>回答問題</strong><br>看完小組介紹後點「開始答題」，選出正確答案</div>
+                    <div class="step-text"><strong>回答問題</strong><br>選出正確答案</div>
                 </div>
                 <div class="step">
                     <div class="step-num">3</div>
@@ -1081,8 +1078,14 @@ window.addEventListener('resize', resizeGrid);
         updateProgress();
     }
     var gParam = parseInt(params.get('g'));
+    // 也支援路徑格式，例如 /114S_PBL01（手機相機掃描直連網址）
+    if (!(gParam >= 1 && gParam <= 16)) {
+        var pathM = window.location.pathname.match(/PBL(\d+)$/i);
+        if (pathM) gParam = parseInt(pathM[1]);
+    }
     if (gParam >= 1 && gParam <= 16) {
         loadGroup(gParam);
+        return; // 從 QR 網址進入時不跳出說明彈窗
     }
     // 每次進入都顯示說明，除非點過「不要再出現」
     if (!localStorage.getItem('pbl_no_intro')) openModal();
